@@ -1,0 +1,9 @@
+%h3 Delete Invoice
+%p Enter invoice number of an passive invoice you would like to delete.
+
+%form{:action => '/useful/delete_invoice'}
+  %p
+    = field "Invoice ID:", :invoice_id, :text, :size => 10
+    *
+  %p
+    = submit_button "Delete"

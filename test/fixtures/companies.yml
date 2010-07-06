@@ -1,0 +1,93 @@
+# Here are Klarnas test COMPANIES.
+# All approved persons have unlimited credit and the system will never accept purchases from the not approved ones.
+#
+# Purchases done with the test persons will be displayed in Klarna Online as regular invoices, although they will
+# unvisible unless you have "Yes" selected next to "Display test invoices" when searching for invoices.
+#
+# We will not pay for the invoices created with the test persons nor companies and we will not collect any fees as well.
+
+se:
+  approved:
+    cno: '6020310139'
+    name: 'Kalle Anka AB'
+    street_address: 'Storgatan 1'
+    postal_code: '12345'
+    city: 'Ankeborg'
+    street_address_2: 'Lillgatan 99'
+    postal_code_2: '77777'
+    city_2: 'Ankeborg'
+    country: 'SE'
+    cell_phone: '076 526 00 00'
+    currency: 'SEK'
+    language: 'SV'
+  unapproved:
+    cno: '6720217931'
+    name: 'Björnligan AB'
+    street_address: 'Fulgatan 1'
+    postal_code: '12345'
+    city: 'Ankeborg'
+    street_address_2: 'Bakgatan 99'
+    postal_code_2: '77777'
+    city_2: 'Ankeborg'
+    country: 'SE'
+    cell_phone: '076 526 00 00'
+    currency: 'SEK'
+    language: 'SV'
+
+no:
+  # Not available yet
+
+dk:
+  approved:
+    pno: '27968880'
+    first_name: ''
+    last_name: 'Onbase ApS'
+    street_address: 'Centrumgaden 37'
+    postal_code: '2750'
+    city: 'Ballerup'
+    country: 'DK'
+    cell_phone: '20 123 456'
+    currency: 'DKK'
+    language: 'DA'
+  unapproved:
+    pno: '99999993'
+    first_name: ''
+    last_name: 'Larsen & Olsen Contracters ApS'
+    street_address: 'Glarmestervej 2'
+    postal_code: '8600'
+    city: 'Silkeborg'
+    street_address: 'Kristianiagade 9'
+    postal_code: '2100'
+    city: 'København Ø'
+    country: 'DK'
+    cell_phone: '20 123 456'
+    currency: 'DKK'
+    language: 'DA'
+
+fi:
+  porin:
+    pno: '10891871'
+    first_name: ''
+    last_name: 'Porin Mies-Laulu r.y.'
+    street_address: 'Vapaudenkatu 10'
+    postal_code: '28100'
+    city: 'Pori'
+    country: 'FI'
+    cell_phone: '040 123 45 67'
+    currency: 'EUR'
+    language: 'FI'
+
+  mankalan:
+    pno: '07527622'
+    first_name: ''
+    last_name: 'Mankalan Perhekodit Oy'
+    street_address: 'Porrassalmenkatu 19 B'
+    postal_code: '50100'
+    city: 'Parikkala'
+    country: 'FI'
+    cell_phone: '040 123 45 67'
+    currency: 'EUR'
+    language: 'FI'
+
+de:
+  # Not available yet

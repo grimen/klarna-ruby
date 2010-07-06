@@ -1,0 +1,17 @@
+%h3 Update Goods Quantity
+%p Enter invoice number of a passive invoice on which you would like to update the quantity of a goods.
+
+%form{:action => '/special/update_goods_quantity'}
+  %p
+    = field "Invoice ID:", :invoice_id, :text, :size => 10
+  %table
+    %thead
+      %tr
+        %th Quantity
+        %th Art.no.
+    %tbody
+      %tr
+        %td= field "", :quantity, :text, :value => "3", :size => 2
+        %td= field "", :article_id, :text, :value => "ABC-123", :size => 10
+  %p
+    = submit_button "Update"

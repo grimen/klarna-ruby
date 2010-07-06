@@ -1,0 +1,296 @@
+%h1 API Methods
+%p Here you can test the Klarna XML-RPC API for Ruby.
+
+:javascript
+  var test_customers = {
+    /* Sweden */
+    'karl': {
+      'pno': '4304158399',
+      'first_name': 'Karl',
+      'last_name': 'Lidin',
+      'street_address': 'Junibackg. 42',
+      'postal_code': '23634',
+      'city': 'Hollviken',
+      'country': 'SE',
+      'currency': 'SEK',
+      'language': 'SV'
+    },
+    /* Sweden */
+    'maud': {
+      'pno': '5311096845',
+      'first_name': 'Maud',
+      'last_name': 'Johansson',
+      'street_address': 'Köpmansgatan 7',
+      'postal_code': '12149',
+      'city': 'Johanneshov',
+      'country': 'SE',
+      'currency': 'SEK',
+      'language': 'SV'
+    },
+    /* Finland */
+    'suvi': {
+      'pno': '2302468989',
+      'first_name': 'Suvi',
+      'last_name': 'Aurinkoinen',
+      'street_address': 'Planeettatie 2',
+      'postal_code': '01450',
+      'city': 'Vantaa',
+      'country': 'FI',
+      'currency': 'EUR',
+      'language': 'FI'
+    },
+    /* Finland */
+    'mikael': {
+      'pno': '010130887T',
+      'first_name': 'Mikael',
+      'last_name': 'Miehinen',
+      'street_address': 'Tikkuritie 11',
+      'postal_code': '01370',
+      'city': 'Vantaa',
+      'country': 'FI',
+      'currency': 'EUR',
+      'language': 'FI'
+    },
+    /* Norway */
+    'petter': {
+      'pno': '18106500157',
+      'first_name': 'Petter',
+      'last_name': 'Testmann',
+      'street_address': 'Hundremeterskogen 100',
+      'postal_code': '0563',
+      'city': 'Oslo',
+      'country': 'NO',
+      'currency': 'NOK',
+      'language': 'NO'
+    },
+    /* Norway */
+    'petra': {
+      'pno': '18106500076',
+      'first_name': 'Petra',
+      'last_name': 'Testdame',
+      'street_address': 'Sofienberggate 56',
+      'postal_code': '0563',
+      'city': 'Oslo',
+      'country': 'NO',
+      'currency': 'NOK',
+      'language': 'NO'
+    },
+    /* Denmark */
+    'rasmus': {
+      'pno': '0505610059',
+      'first_name': 'Rasmus Jens-Peter',
+      'last_name': 'Lybert',
+      'street_address': 'Godthåbvej 8,-2',
+      'postal_code': '3900',
+      'city': 'Godthåb',
+      'country': 'DK',
+      'currency': 'DKK',
+      'language': 'DA'
+    },
+    /* Germany */
+    'uno': {
+      'pno': '070719601',
+      'first_name': 'Uno',
+      'last_name': 'Vier',
+      'street_address': 'Hellersbergstrasse',
+      'postal_code': '41460',
+      'city': 'Neuss',
+      'country': 'DE',
+      'currency': 'EUR',
+      'language': 'DE'
+    }
+  }
+  var test_companies = {
+    /* Sweden */
+    'kalle_anka': {
+      'pno': '27968880',
+      'first_name': '',
+      'last_name': 'Kalle Anka AB',
+      'street_address': 'Storgatan 1',
+      'postal_code': '12345',
+      'city': 'Ankeborg',
+      'country': 'SE',
+      'currency': 'SEK',
+      'language': 'SV'
+    },
+    /* Sweden */
+    'bjornligan': {
+      'pno': '6720217931',
+      'first_name': '',
+      'last_name': 'Björnligan AB',
+      'street_address': 'Fulgatan 1',
+      'postal_code': '12345',
+      'city': 'Ankeborg',
+      'country': 'SE',
+      'currency': 'SEK',
+      'language': 'SV'
+    },
+    /* Finland */
+    'porin': {
+      'pno': '10891871',
+      'first_name': '',
+      'last_name': 'Porin Mies-Laulu r.y.',
+      'street_address': 'Vapaudenkatu 10',
+      'postal_code': '28100',
+      'city': 'Pori',
+      'country': 'FI',
+      'currency': 'EUR',
+      'language': 'FI'
+    },
+    /* Finland */
+    'mankalan': {
+      'pno': '07527622',
+      'first_name': '',
+      'last_name': 'Mankalan Perhekodit Oy',
+      'street_address': 'Porrassalmenkatu 19 B',
+      'postal_code': '50100',
+      'city': 'Parikkala',
+      'country': 'FI',
+      'currency': 'EUR',
+      'language': 'FI'
+    },
+    /* Denmark */
+    'onbase': {
+      'pno': '27968880',
+      'first_name': '',
+      'last_name': 'Onbase ApS',
+      'street_address': 'Centrumgaden 37',
+      'postal_code': '2750',
+      'city': 'Ballerup',
+      'country': 'DK',
+      'currency': 'DKK',
+      'language': 'DA'
+    }
+  };
+
+  function loadFormValues(values) {
+    document.add_transaction.pno.value            = values['pno'];
+    document.add_transaction.first_name.value     = values['first_name'];
+    document.add_transaction.last_name.value      = values['last_name'];
+    document.add_transaction.street_address.value = values['street_address'];
+    document.add_transaction.postal_code.value    = values['postal_code'];
+    document.add_transaction.city.value           = values['city'];
+    document.add_transaction.country.value        = values['country'];
+    document.add_transaction.currency.value       = values['currency'];
+    document.add_transaction.lang.value           = values['language'];
+
+    document.reserve_amount.pno.value                     = values['pno'];
+    document.reserve_amount.delivery_first_name.value     = values['first_name'];
+    document.reserve_amount.delivery_last_name.value      = values['last_name'];
+    document.reserve_amount.delivery_street_address.value = values['street_address'];
+    document.reserve_amount.delivery_postal_code.value    = values['postal_code'];
+    document.reserve_amount.delivery_city.value           = values['city'];
+    document.reserve_amount.delivery_country.value        = values['country'];
+    document.reserve_amount.invoice_first_name.value      = values['first_name'];
+    document.reserve_amount.invoice_last_name.value       = values['last_name'];
+    document.reserve_amount.invoice_street_address.value  = values['street_address'];
+    document.reserve_amount.invoice_postal_code.value     = values['postal_code'];
+    document.reserve_amount.invoice_city.value            = values['city'];
+    document.reserve_amount.invoice_country.value         = values['country'];
+    document.reserve_amount.country.value                 = values['country'];
+    document.reserve_amount.currency.value                = values['currency'];
+    document.reserve_amount.lang.value                    = values['language'];
+    document.reserve_amount.pno_encoding.value            = values['pno_encoding'] || values['country'];
+
+    document.active_reservation.pno.value                     = values['pno'];
+    document.active_reservation.delivery_first_name.value     = values['first_name'];
+    document.active_reservation.delivery_last_name.value      = values['last_name'];
+    document.active_reservation.delivery_street_address.value = values['street_address'];
+    document.active_reservation.delivery_postal_code.value    = values['postal_code'];
+    document.active_reservation.delivery_city.value           = values['city'];
+    document.active_reservation.delivery_country.value        = values['country'];
+    document.active_reservation.invoice_first_name.value      = values['first_name'];
+    document.active_reservation.invoice_last_name.value       = values['last_name'];
+    document.active_reservation.invoice_street_address.value  = values['street_address'];
+    document.active_reservation.invoice_postal_code.value     = values['postal_code'];
+    document.active_reservation.invoice_city.value            = values['city'];
+    document.active_reservation.invoice_country.value         = values['country'];
+    document.active_reservation.country.value                 = values['country'];
+    document.active_reservation.currency.value                = values['currency'];
+    document.active_reservation.lang.value                    = values['language'];
+    document.active_reservation.pno_encoding.value            = values['pno_encoding'] || values['country'];
+  }
+
+  function setFormValues(name) {
+    var values = test_customers[name] || test_companies[name];
+    loadFormValues(values);
+  }
+
+%h2 Test persons
+%strong Sweden:
+= button("Karl", "setFormValues('karl')")
+= button("Maud", "setFormValues('maud')")
+= button("Kalle Anka AB", "setFormValues('kalle_anka')")
+= button("Björnligan AB", "setFormValues('bjornligan')")
+%br
+%strong Finland:
+= button("Suvi", "setFormValues('suvi')")
+= button("Mikael", "setFormValues('mikael')")
+= button("Porin", "setFormValues('porin')")
+= button("Mankalan", "setFormValues('mankalan')")
+%br
+%strong Denmark:
+= button("Rasmus", "setFormValues('rasmus')")
+= button("Onbase", "setFormValues('onbase')")
+%br
+%strong Norway:
+= button("Petter", "setFormValues('petter')")
+= button("Petra", "setFormValues('petra')")
+%br
+%strong Germany:
+= button("Uno", "setFormValues('uno')")
+
+%h2 A. Essential
+%section
+  = partial(:essential, :get_addresses, :form)
+  %hr
+  = partial(:essential, :calculate_monthly_cost, :form)
+  %hr
+  = partial(:essential, :add_transaction, :form)
+
+%h2 B. Useful
+%section
+  = partial(:useful, :activate_invoice, :form)
+  %hr
+  = partial(:useful, :credit_invoice, :form)
+  %hr
+  = partial(:useful, :return_amount, :form)
+  %hr
+  = partial(:useful, :delete_invoice, :form)
+  %hr
+  = partial(:useful, :email_invoice, :form)
+  %hr
+  = partial(:useful, :send_invoice, :form)
+  %hr
+  = partial(:useful, :has_account, :form)
+
+%h2 C. Special
+%section
+  = partial(:special, :update_goods_quantity, :form)
+  %hr
+  = partial(:special, :update_charge_amount, :form)
+  %hr
+  = partial(:special, :update_order_number, :form)
+  %hr
+  = partial(:special, :invoice_address, :form)
+  %hr
+  = partial(:special, :invoice_amount, :form)
+  %hr
+  = partial(:special, :is_invoice_paid, :form)
+  %hr
+  = partial(:special, :get_pclasses, :form)
+  %hr
+
+%h2 D. Reservation
+%section
+  = partial(:reservation, :reserve_amount, :form)
+  %hr
+  = partial(:reservation, :activate_reservation, :form)
+  %hr
+  = partial(:reservation, :cancel_reservation, :form)
+  %hr
+  = partial(:reservation, :change_reservation, :form)
+  %hr
+  = partial(:reservation, :split_reservation, :form)
+  %hr
+  = partial(:reservation, :reserve_ocr_numbers, :form)

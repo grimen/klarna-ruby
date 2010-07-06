@@ -1,0 +1,8 @@
+%h3 Invoice Address
+%p Enter the invoice number of an invoice you would like see the address of.
+
+%form{:action => '/special/invoice_addresses'}
+  %p
+    = field "Invoice ID:", :invoice_id, :text, :size => 10
+  %p
+    = submit_button "Get"

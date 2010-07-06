@@ -1,0 +1,8 @@
+%h3 Is Invoice Paid?
+%p Enter the invoice number that you want to check.
+
+%form{:action => '/special/is_invoice_paid'}
+  %p
+    = field "Invoice ID:", :invoice_id, :text, :size => 10
+  %p
+    = submit_button "Check"

@@ -1,0 +1,14 @@
+%h3 Split Reservation
+%p Enter reservation number and new amount.
+
+%form{:action => '/reservation/split_reservation'}
+  %p
+    = field "Reservation ID:", :reservation_id, :text, :size => 6
+  %p
+    = field "Split amount:", :split_amount, :text, :size => 6
+  %p
+    = field "Order ID #1:", :order_id_1, :text, :size => 6
+  %p
+    = field "Order ID #2:", :order_id_2, :text, :size => 6
+  %p
+    = submit_button "Split"

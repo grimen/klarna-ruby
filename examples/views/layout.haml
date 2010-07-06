@@ -1,0 +1,48 @@
+!!! 5
+%html
+  %head
+    %title Klarna API Test (Ruby)
+    %meta{:'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8'}
+    %style
+      :sass
+        body
+          padding: 0.3em 0.5em
+          font:
+            family: helvetica
+            size: 90%
+        h2
+          border-bottom: 1px solid #ccc
+          padding-bottom: 0.2em
+          margin:
+            top: 1.5em
+            bottom: 1em
+        form
+          font-size: 80%
+        label
+          font-weight: bold
+        hr
+          border: none
+          border-bottom: 1px dotted #ccc
+        section
+          padding-left: 2em
+        th
+          text-align: left
+%body
+  %header
+    #logo
+      %img{:src => "/images/klarna.png"}
+      %img{:src => "/images/ruby.png"}
+
+    %nav
+      %p
+        %strong Examples:
+        = link_to "API Methods", :root
+        = "|"
+        = link_to "Product Page", :product_page_example
+        = "|"
+        = link_to "Checkout Page", :checkout_page_example
+        = "|"
+        = link_to "Payment Terms", :payment_terms_example
+
+  #content
+    = yield

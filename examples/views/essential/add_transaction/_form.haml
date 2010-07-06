@@ -1,0 +1,32 @@
+%h3 Add Transaction (Create Invoice)
+
+%form{:action => '/essential/add_transaction', :name => 'add_transaction'}
+  %p
+    = field "SSN:", :pno, :text, :size => 12, :value => "430415-8399"
+    *
+  = partial(:address)
+  %p
+    = field "E-mail:", :email, :email, :size => 30
+    *
+  %p
+    = field "Phone:", :phone, :tel, :size => 10
+    *
+  %p
+    = field "Mobile:", :mobile, :tel, :size => 10
+  %p
+    = field "Order ID:", :order_id, :text, :size => 10
+  %p
+    = field "Auto-activation:", :auto_activation, :checkbox
+  %p
+    = field "Pre-pay:", :pre_pay, :checkbox
+  %p
+    = currency_selector("Currency:")
+  %p
+    = language_selector("Language:")
+  %p
+    = field "Yearly salary:", :yearly_salary, :text, :size => 10
+    (* with invoice purchases over 6000 SEK, DKK, NOK or 600 EUR)
+  %p
+    = field "Reference ID:", :reference, :text, :size => 10
+  %p
+    = submit_button "Create"

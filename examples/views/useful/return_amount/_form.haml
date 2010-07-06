@@ -1,0 +1,15 @@
+%h3 Return Amount
+%p Enter an invoice number and the amount you will return from the invoice.
+
+%form{:action => '/useful/return_amount'}
+  %p
+    = field "Invoice ID:", :invoice_id, :text, :size => 10
+    *
+  %p
+    = field "Amount:", :amount, :text, :size => 6
+    *
+  %p
+    = field "VAT:", :vat, :text, :size => 4, :value => '25,00'
+    *
+  %p
+    = submit_button "Return"

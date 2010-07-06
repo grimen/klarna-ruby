@@ -1,0 +1,8 @@
+%h3 Cancel Reservation
+%p Enter reservation number of reservation to cancel.
+
+%form{:action => '/reservation/cancel_reservation'}
+  %p
+    = field "Reservation ID:", :reservation_id, :text, :size => 6
+  %p
+    = submit_button "Cancel it"

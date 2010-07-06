@@ -1,0 +1,106 @@
+Kontakt: 0765260036
+
+h1. Klarna
+
+_A Ruby wrapper for Klarna/Kreditor XML-RPC API._
+
+h2. Introduction
+
+...
+
+*Supported countries:*
+
+Sweden (SE), Norway (NO), Denmark (DK), Finland (FI), and Germany (DE).
+
+*Klarna Basics:*
+
+* "Overview":http://integration.klarna.com/index.php/component/content/article/433
+* "Detailed":http://integration.klarna.com/step-by-step/checkout
+* "Checkout":http://integration.klarna.com/step-by-step/checkout-advanced
+* "Implementation Checklist":http://integration.klarna.com/step-by-step/checklist
+
+h2. Setup
+
+Install the gem:
+
+<pre>
+  $ sudo gem install klarna
+</pre>
+
+h2. Usage
+
+<pre>
+  require 'rubygems'
+  require 'klarna'
+
+  Klarna.setup do |config|
+    config.store_id = 123
+    config.store_secret = 'AbCdEfGh123'
+    config.p_classes_class = ::Klarna::API::PClasses
+  end
+
+  Klarna::API.client.get_addresses(...)
+</pre>
+
+h2. Testing
+
+Three ways...
+
+*Specs*
+
+To run unit/integration tests, simply do:
+
+<pre>
+  $ rake test
+</pre>
+
+*Dummie client*
+
+<pre>
+  $ cd examples
+  $ ruby dummie_client.rb
+</pre>
+
+*Sinatra app*
+
+1. Start the server...
+
+<pre>
+  $ cd examples
+  $ ruby klarna_app
+  ...
+  >> Listening on 0.0.0.0:4567, CTRL+C to stop
+</pre>
+
+2. Open it up!
+
+@http://localhost:4567@
+
+h2. Debugging
+
+*HTTP-debugging in Wireshark*
+
+Ensure port @4567@ (port used for Klarna API integration test/debugging) is in the list of captured ports in the HTTP/HTTPS preferences, or these requests/responses will not be captured. Note: Port @80@ (port used for Klarna API integration in production) is captured by default.
+
+*XML-RPC-debugging in a XML-RPC client*
+
+Try this:
+
+Endpoint: @http://beta-test.kreditor.se:4567@
+Method: @get_addresses@
+Params: @["1.0","ruby/xmlrpc","430415-8399",2,"AY2qnVNi8ccTsuDw2XNovQ==",2,2]@
+
+h2. References
+
+* "Klarna API Documentation":http://integration.klarna.com/api-functions/overview
+* "XML-RPC Overview":http://en.wikipedia.org/wiki/XML-RPC
+
+h2. Tools
+
+* "XML-RPC Client":http://ditchnet.org/xmlrpc/ for XML-RPC debugging on OS X.
+* "Wireshark":http://wireshark.org for platform-independent protocol sniffing, useful for debugging XML-RPC requests/responses.
+
+h2. License
+
+Released under the MIT license.
+Copyright (c) "Jonas Grimfelt":http://github.com/grimen for "Socio-T":http://socio-t.com

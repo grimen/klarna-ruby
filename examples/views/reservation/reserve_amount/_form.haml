@@ -1,0 +1,58 @@
+%h3 Reserve Amount (Create Reservation)
+%p
+
+%form{:action => '/reservation/reserve_amount', :name => 'reserve_amount'}
+  %p
+    = field "SSN:", :pno, :text, :size => 10
+    *
+  %p
+    = field "Amount:", :amount, :text, :size => 10
+    *
+
+  = partial :articles
+
+  %p
+    = currency_selector "Currency:"
+  %p
+    = field "Reference", :reference, :text, :size => 10
+  %p
+    = field "Reference ID", :reference_id, :text, :size => 10
+  %p
+    = field "Order ID #1:", :order_id_1, :text, :size => 10
+  %p
+    = field "Order ID #2", :order_id_2, :text, :size => 10
+
+  %table
+    %tbody
+      %tr
+        %td
+          %h3 Delivery address:
+          = partial :address, :prefix => 'delivery_'
+
+        %td
+          %h3 Invoice address:
+          = partial :address, :prefix => 'invoice_'
+
+  %p
+    = field "E-mail:", :email, :text, :size => 20
+    *
+  %p
+    = field "Phone:", :phone, :text, :size => 10
+    *
+  %p
+    = field "Mobile:", :mobile, :text, :size => 10
+    *
+  %p
+    = field "Annual salary:", :annual_salary, :text, :size => 20, :value => 0
+
+  %p
+    = shipment_type_selector "Shipment type:"
+  %p
+    = country_selector "Country:"
+  %p
+    = language_selector "Language:"
+  %p
+    = ssn_encoding_selector "SSN Encoding:"
+
+  %p
+    = submit_button "Reserve"

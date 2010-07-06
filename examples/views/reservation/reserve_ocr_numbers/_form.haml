@@ -1,0 +1,8 @@
+%h3 Reserve OCR Numbers
+%p Enter the number of ocrnumbers that you want to reserve. (Swedish only)
+
+%form{:action => '/reservation/reserve_ocr_numbers'}
+  %p
+    = field "Number of OCRs:", :ocr_count, :text, :size => "2"
+  %p
+    = submit_button "Reserve"

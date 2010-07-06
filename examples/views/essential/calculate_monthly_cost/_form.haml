@@ -1,0 +1,16 @@
+%h3 Calculate Monthly Cost
+%p Calculates the monthly cost given a purchase sum and a account key for low amounts.
+
+%form{:action => '/essential/calculate_monthly_cost'}
+  %p
+    = field "Sum:", :sum, :text, :size => "4", :value => "49"
+  %p
+    = field "Interest rate:", :interest_rate, :text, :size => "5", :value => "19.5"
+  %p
+    = field "Amount of months:", :months, :text, :size => "2", :value => "24"
+  %p
+    = field "Monthly cost:", :monthly_fee, :text, :size => "5", :value => "29"
+  %p
+    = currency_selector("Currency:")
+  %p
+    = submit_button "Calculate"

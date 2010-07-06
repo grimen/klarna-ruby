@@ -1,0 +1,10 @@
+%h3 Update Order Number
+%p Enter invoice number of a passive invoice on which you would like to update the order number.
+
+%form{:action => '/special/update_order_number'}
+  %p
+    = field "Invoice ID:", :invoice_id, :text, :size => 10
+  %p
+    = field "New order number:", :new_order_id, :text, :size => 10
+  %p
+    = submit_button "Update"

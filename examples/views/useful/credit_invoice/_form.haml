@@ -1,0 +1,11 @@
+%h3 Credit Invoice
+%p Enter invoice number of an active invoice you would like to return. Options: Fully, or partly.
+
+%form{:action => '/useful/activate_invoice'}
+  %p
+    = field "Invoice ID:", :invoice_id, :text, :size => 10
+    *
+  %p
+    = field "Credit ID:", :credit_id, :text, :size => 10
+  %p
+    = submit_button "Credit"

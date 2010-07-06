@@ -1,0 +1,22 @@
+- prefix ||= ''
+
+%p
+  = field "First name:", :"#{prefix}first_name", :text, :size => "20", :value => ""
+  *
+%p
+  = field "Last name:", :"#{prefix}last_name", :text, :size => "20", :value => ""
+  *
+%p
+  = field "Street address:", :"#{prefix}street_address", :text, :size => "40", :value => ""
+  *
+%p
+  = field "House number:", :"#{prefix}house_number", :text, :size => "2", :value => ""
+  (* Germany only)
+%p
+  = field "Postal code:", :"#{prefix}postal_code", :text, :size => "5", :value => ""
+  *
+%p
+  = field "City:", :"#{prefix}city", :text, :size => "20", :value => ""
+  *
+%p
+  = country_selector("Country:", :prefix => prefix)

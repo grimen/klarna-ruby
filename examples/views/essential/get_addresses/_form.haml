@@ -1,0 +1,9 @@
+%h3 Get Addresses
+%p Enter personal number to get customers addresses. (Swedish only)
+
+%form{:action => '/essential/get_addresses'}
+  %p
+    = field "SSN:", :pno, :text, :size => "12", :value => "430415-8399"
+    *
+  %p
+    = submit_button "Get address"

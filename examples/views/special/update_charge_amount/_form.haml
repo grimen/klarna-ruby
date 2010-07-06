@@ -1,0 +1,15 @@
+%h3 Update Charge Amount
+%p Enter invoice number of a passive invoice on which you would like to update the charge amount.
+
+%form{:action => '/special/update_charge_amount'}
+  %p
+    = field "Invoice ID:", :invoice_id, :text, :size => 10
+  %p
+    %input{:name => :charge_type, :type => :radio, :value => '0', :checked => true}
+      %label{:for => :charge_type}= "Shipment"
+    %input{:name => :charge_type, :type => :radio, :value => '1'}
+      %label{:for => :charge_type}= "Handling"
+  %p
+    = field "New amount:", :new_amount, :text, :size => 6
+  %p
+    = submit_button "Update"

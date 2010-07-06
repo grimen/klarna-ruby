@@ -1,0 +1,10 @@
+%h3 Change Reservation
+%p Enter reservation number and new amount.
+
+%form{:action => '/reservation/change_reservation'}
+  %p
+    = field "Reservation ID:", :reservation_id, :text, :size => 6
+  %p
+    = field "New amount:", :new_amount, :text, :size => 6
+  %p
+    = submit_button "Update"

@@ -1,0 +1,8 @@
+%h3 Get P-Classes
+%p Chose the currency you want to retreive the pclasses for
+
+%form{:action => '/special/get_pclasses'}
+  %p
+    = currency_selector("Currency:")
+  %p
+    = submit_button "Get"

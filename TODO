@@ -1,0 +1,7 @@
+= TODO
+
+* Ensure correct params datatypes are submitted
+
+* Ensure valid string format/stripping (e.g. SSN, etc)
+
+* ActiveMerchant-integration
