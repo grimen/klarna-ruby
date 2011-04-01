@@ -1,0 +1,8 @@
+# -*- ruby -*-
+
+Autotest.add_hook :initialize do |at|
+  at.add_exception 'tmp'
+  at.testlib = "minitest/autorun"
+
+  at.find_directories = ARGV unless ARGV.empty?
+end

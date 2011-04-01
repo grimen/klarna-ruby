@@ -3,7 +3,7 @@
 
 %form{:action => '/special/update_goods_quantity'}
   %p
-    = field "Invoice ID:", :invoice_id, :text, :size => 10
+    = field "Invoice ID:", :invoice_no, :text, :size => 10
   %table
     %thead
       %tr
@@ -12,6 +12,6 @@
     %tbody
       %tr
         %td= field "", :quantity, :text, :value => "3", :size => 2
-        %td= field "", :article_id, :text, :value => "ABC-123", :size => 10
+        %td= field "", :article_no, :text, :value => "ABC-123", :size => 10
   %p
     = submit_button "Update"

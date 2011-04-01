@@ -1,7 +1,27 @@
-= TODO
 
-* Ensure correct params datatypes are submitted
+== CURRENT
 
-* Ensure valid string format/stripping (e.g. SSN, etc)
+x [feature]: Implement the last missing Invoicing methods
+-----
+* [feature]: Review/Implement something like: our_settype_integer, our_strip_string, our_settype_string (consider one generic method, e.g. parse(:price, value) - all validation/masking/casting in one place)
+* [feature]: Ensure valid string format/stripping (e.g. SSN, etc)
+* [feature]: Ensure correct params datatypes are submitted (validation - consider generic method)
 
-* ActiveMerchant-integration
+
+== HIGH-PRIO
+
+* [feature]: Implement #get_pclasses method to export pclasses as hash (and maybe export to YAML?)
+* [feature]: ActiveMerchant-integration (fork ActiveMerchant and add klarna as new gateway with "klarna-ruby" as dependency)
+
+
+== LOW-PRIO
+
+* [feature]: Finalize the rest of the specs for already implemented methods, commented out currently.
+* [feature]: Implement Reservation methods
+* [feature]: Klarna::DSL - wrapper DSL for less sucky integrations
+* [feature]: Bring back "examples/web" - probably not working at all now.
+
+
+== MAYBE
+
+* [feature]: Mock XML-responses by default to avoid live API calls, but allow live calls using ENV['REMOTE]=true

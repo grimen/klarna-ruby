@@ -1,0 +1,8 @@
+source 'http://gemcutter.org'
+
+gem 'sinatra', :require => false
+gem 'sinatra-mapping', :require => false
+gem 'haml', :require => false
+gem 'activesupport', '2.3.11'
+gem 'nokogiri'
+gem 'klarna', :path => '..'

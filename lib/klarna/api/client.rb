@@ -1,13 +1,15 @@
 # encoding: utf-8
 require 'xmlrpc/client'
 
+require 'klarna/api/methods'
+
 module Klarna
   module API
     class Client < ::XMLRPC::Client
 
       include ::Klarna::API::Methods
 
-      attr_accessor :store_id, :store_secret, :mode, :use_ssl, :host, :port, :timeout
+      attr_accessor :store_id, :store_secret, :mode, :timeout, :last_request_headers, :last_request_params, :last_response
 
       def initialize(*args)
         self.store_id = args.shift || ::Klarna.store_id
@@ -19,7 +21,6 @@ module Klarna
 
         options = args.extract_options!
         self.mode = options.key?(:mode) ? options[:mode] : ::Klarna.mode
-        self.use_ssl = options.key?(:use_ssl) ? options[:use_ssl] : ::Klarna.use_ssl
         self.timeout = options.key?(:timeout) ? options[:timeout] : 10 # seconds
 
         unless ::Klarna::API::END_POINT.keys.include?(self.mode)
@@ -27,13 +28,10 @@ module Klarna
           "Valid modes: #{::Klarna::API::END_POINT.keys.collect(&:inspect).join(', ')}"
         end
 
-        self.host = ::Klarna::API::END_POINT[self.mode][:host]
-        self.port = options.key?(:port) ? options[:port] : ::Klarna::API::END_POINT[self.mode][:port]
-
         begin
           ::Klarna.log "Endpoint URI: %s" % self.endpoint_uri.inspect
 
-          super(self.host, '/', self.port, nil, nil, nil, nil, self.use_ssl, self.timeout)
+          super(self.host, '/', self.port, nil, nil, nil, nil, self.use_ssl?, self.timeout)
 
           self.http_header_extra ||= {}
           self.http_header_extra.merge!(self.content_type_headers)
@@ -44,42 +42,51 @@ module Klarna
         end
       end
 
-      def call_with_defaults(service_method, *args)
+      def call(service_method, *args)
         args.collect! { |arg| arg.is_a?(String) ? ::Iconv.conv('utf-8', ::Klarna::API::PROTOCOL_ENCODING, arg) : arg }
         ::Klarna.log "Method: #{service_method}"
         ::Klarna.log "Params: %s" % self.add_meta_params(*args).inspect
 
+        self.last_request_headers = http_header_extra
+
         begin
           ::Klarna.log_result("Result: %s") do
-            self.call(service_method, *self.add_meta_params(*args))
+            params = self.add_meta_params(*args)
+            self.last_request_params = params
+            self.last_response = super(service_method, *params)
           end
         rescue ::XMLRPC::FaultException => e
           raise ::Klarna::API::KlarnaServiceError.new(e.faultCode, e.faultString)
+        rescue ::Timeout::Error => e
+          raise ::Klarna::API::KlarnaServiceError.new(-1, e.message)
         end
       end
 
-      def use_ssl?
-        self.use_ssl
+      def ssl?
+        self.protocol == 'https'
       end
+      alias :use_ssl? :ssl?
 
       def protocol
-        self.use_ssl? ? 'https' : 'http'
+        ::Klarna::API::END_POINT[self.mode][:protocol]
+      end
+
+      def host
+        ::Klarna::API::END_POINT[self.mode][:host]
       end
 
       def port
-        @port || (self.use_ssl? ? 443 : ::Klarna::API::END_POINT[self.mode][:port])
+        ::Klarna::API::END_POINT[self.mode][:port]
       end
 
       def endpoint_uri
-        "#{self.protocol}://#{self.host}:#{self.port}"
-      end
-
-      def environment=(value)
-        @environment = value.to_s.downcase.to_sym rescue ::Klarna::DEFAULT_MODE
+        @endpoint_uri = "#{self.protocol}://#{self.host}:#{self.port}"
       end
 
       protected
 
+        # Request content-type headers.
+        #
         def content_type_headers
           {
             :'Accept-Charset' => ::Klarna::API::PROTOCOL_ENCODING,
@@ -97,8 +104,11 @@ module Klarna
           args
         end
 
+        # Pass additional required digest args to the raw digest method.
+        #
         def digest(*args)
-          ::Klarna::API.digest(*[self.store_id, args, self.store_secret].flatten)
+          options = args.extract_options!
+          ::Klarna::API.digest(*[(self.store_id unless options[:store_id] == false), args, self.store_secret].compact.flatten)
         end
 
     end

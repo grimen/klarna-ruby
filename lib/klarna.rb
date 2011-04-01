@@ -1,37 +1,49 @@
 # encoding: utf-8
 require 'rubygems'
+require 'bundler'
+Bundler.require
 require 'i18n'
 require 'active_support'
 
 module Klarna
 
   autoload :API,      'klarna/api'
-  autoload :Models,   'klarna/models'
   autoload :VERSION,  'klarna/version'
 
-  KlarnaConfigError = Class.new(::StandardError)
+  module API
+    autoload :Client,     'klarna/api/client'
+    autoload :Constants,  'klarna/api/constants'
+    autoload :Errors,     'klarna/api/errors'
 
-  DEFAULT_STORE_CONFIG_FILE = File.join(ENV['HOME'], '.kreditor.yml')
-  VALID_COUNTRIES = [:SE, :NO, :FI, :DK]
-  DEFAULT_COUNTRY = VALID_COUNTRIES.first
-  DEFAULT_MODE = :test
+    module Methods
+      autoload :Standard,         'klarna/api/methods/standard'
+      autoload :Invoicing,        'klarna/api/methods/invoicing'
+      autoload :Reservation,      'klarna/api/methods/reservation'
+      autoload :CostCalculations, 'klarna/api/methods/cost_calculations'
+    end
+  end
+
+  class KlarnaConfigError < ::StandardError
+  end
+
+  DEFAULT_STORE_CONFIG_FILE = File.join(ENV['HOME'], '.klarna.yml') unless defined?(::Klarna::DEFAULT_STORE_CONFIG_FILE)
+  VALID_COUNTRIES = [:SE, :NO, :FI, :DK] unless defined?(::Klarna::VALID_COUNTRIES)
+  DEFAULT_COUNTRY = VALID_COUNTRIES.first unless defined?(::Klarna::DEFAULT_COUNTRY)
+  DEFAULT_MODE = :test unless defined?(::Klarna::DEFAULT_MODE)
 
   # Specifies running mode: +:test+ (alla actions gets virtual) or +:production+ (live)
   # Default: +:test+
   mattr_accessor :mode
   @@mode = :test
 
-  mattr_accessor :use_ssl
-  @@use_ssl = false
-
   # Country used to ensure that params sent to Klarna service is correct.
   # Default: +:SE+
   mattr_accessor :country
-  @@country = DEFAULT_COUNTRY
+  @@country = ::Klarna::DEFAULT_COUNTRY
 
   # Klarna e-store ID (a.k.a. "eid") used for Klarna API authentication.
   # Default: +nil+
-  # NOTE: If +nil+, Klarna will look for credentials in file specified by +Devise.credentials_file+.
+  # NOTE: If +nil+, Klarna will look for credentials in file specified by +Devise.store_config_file+.
   mattr_accessor :store_id
   @@store_id = nil
 
@@ -48,13 +60,13 @@ module Klarna
   #   * Required for campaigns
   #   * This should maybe be initialized from database to make more dynamic (e.g. admin inteface).
   #
-  mattr_accessor :pclasses
-  @@pclasses = nil
+  mattr_accessor :store_pclasses
+  @@store_pclasses = nil
 
   # Path to a YAML file containing API credentials - used only if +store_id+ and +store_secret+ are not set.
-  # Default: +"~/.kreditor.yml"+
+  # Default: +"~/.klarna.yml"+
   mattr_accessor :store_config_file
-  @@store_config_file = DEFAULT_STORE_CONFIG_FILE
+  @@store_config_file = ::Klarna::DEFAULT_STORE_CONFIG_FILE
 
   # The logger to use in log mode.
   # Default: +::Logger.new(::STDOUT)+
@@ -84,7 +96,22 @@ module Klarna
     #
     def setup
       yield self
-      self.load_credentials unless self.store_id || self.store_secret
+      self.load_credentials_from_file unless self.store_id || self.store_secret
+    end
+    alias :configure :setup
+
+    # Reset to defaults - mostly usable in specs.
+    #
+    def reset!
+      self.mode = ::Klarna::DEFAULT_MODE
+      self.country = ::Klarna::DEFAULT_COUNTRY
+      self.store_id = nil
+      self.store_secret = nil
+      self.store_pclasses = nil
+      self.store_config_file = ::Klarna::DEFAULT_STORE_CONFIG_FILE
+      self.logger = ::Logger.new(::STDOUT)
+      self.logging = false
+      self.http_logging = false
     end
 
     # Logging helper for debugging purposes.
@@ -106,31 +133,39 @@ module Klarna
 
     # Optional: Try to load credentials from a system file.
     #
-    def load_credentials_file(force = false)
+    def load_credentials_from_file(force = false)
       begin
         store_config = File.open(self.store_config_file) { |file| YAML.load(file).with_indifferent_access }
-        self.store_id     = store_config[self.mode][:store_id] if force || self.store_id.nil?
+        self.store_id = store_config[self.mode][:store_id] if force || self.store_id.nil?
         self.store_secret = store_config[self.mode][:store_secret] if force || self.store_secret.nil?
-        self.pclasses     = store_config[self.mode][:pclasses] if force || self.pclasses.nil?
+        self.store_pclasses = store_config[self.mode][:store_pclasses] if force || self.store_pclasses.nil?
       rescue
         raise KlarnaConfigError, "Could not load store details from: #{self.store_config_file.inspect}"
       end
     end
 
     def store_id=(value)
-      @@store_id = value.to_i
+      @@store_id = value ? value.to_i : value
     end
 
     def store_secret=(value)
-      @@store_secret = value.to_s.strip
+      @@store_secret = value ? value.to_s.strip : value
     end
 
     def country=(value)
-      @@country = value.to_s.upcase.to_sym rescue DEFAULT_COUNTRY
+      @@country = value.to_s.upcase.to_sym rescue ::Klarna::DEFAULT_COUNTRY
     end
 
     def mode=(value)
-      @@mode = value.to_s.downcase.to_sym rescue DEFAULT_MODE
+      @@mode = value.to_s.downcase.to_sym rescue ::Klarna::DEFAULT_MODE
+    end
+
+    def valid_countries
+      ::Klarna::VALID_COUNTRIES
+    end
+
+    def default_country
+      ::Klarna::DEFAULT_COUNTRY
     end
 
     alias :logging? :logging
@@ -138,6 +173,3 @@ module Klarna
   end
 
 end
-
-# Load all I18n locales.
-::I18n.load_path.unshift Dir[File.expand_path(File.join(File.dirname(__FILE__), *%w[klarna locales *.yml])).to_s]

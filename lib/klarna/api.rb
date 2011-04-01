@@ -3,16 +3,11 @@ require 'iconv'
 require 'digest/md5'
 require 'xmlrpc/base64'
 
+require 'klarna/api/constants'
+require 'klarna/api/errors'
+
 module Klarna
   module API
-
-    autoload :Client,     'klarna/api/client'
-
-    autoload :Constants,  'klarna/api/constants'
-    autoload :Errors,     'klarna/api/errors'
-    autoload :Methods,    'klarna/api/methods'
-
-    autoload :PClasses,   'klarna/api/p_classes'
 
     # == Reference:
     #
@@ -36,8 +31,10 @@ module Klarna
     #   ...or use the API-method +::Klarna::API.get_pclasses+.
     #
 
-    include Constants
-    include Errors
+    include ::Klarna::API::Constants
+    include ::Klarna::API::Errors
+
+    @@client = nil
 
     class << self
 
@@ -45,34 +42,112 @@ module Klarna
       #
       def client(force_new = false)
         begin
-          @@client = ::Klarna::API::Client.new if force_new || @@client.nil?
-        rescue
+          if force_new || @@client.nil?
+            @@client = ::Klarna::API::Client.new
+          end
+        rescue => e
           ::Klarna.log e, :error
         end
+        @@client
       end
 
-      def currency_id_for(currency)
+      def key_for(kind, value)
         begin
-          currency.is_a?(Fixnum) ? currency : ::Klarna::API::Currencies.const_get(currency.to_s.upcase.to_sym)
+          kind = validated_kind(kind)
+        rescue => e
+          raise e
+        end
+
+        begin
+          is_correct_format = !(value.to_s =~ /^\d+$/)
+          constants = ::Klarna::API.const_get(kind)
+          key = is_correct_format ? value : constants.invert[value.to_i] # BUG: Should lookup the value's key.
         rescue
-          raise "Invalid currency: #{currency.inspect}"
+          raise ::Klarna::API::KlarnaArgumentError, "Invalid '#{kind}': #{value.inspect}"
+        end
+
+        key ? key.to_sym : nil
+      end
+
+      def id_for(kind, value)
+        begin
+          kind = validated_kind(kind)
+        rescue => e
+          raise e
+        end
+
+        begin
+          is_correct_format = (value.to_s =~ /^\d+$/)
+          constants = ::Klarna::API.const_get(kind)
+          id = is_correct_format ? value.to_i : constants[value.to_s.upcase.to_sym]
+        rescue
+          raise ::Klarna::API::KlarnaArgumentError, "Invalid '#{kind}': #{value.inspect}"
+        end
+
+        id ? id.to_i : nil
+      end
+
+      # Validate if specified +kind+ is a valid constant.
+      #
+      def validated_kind(kind)
+        valid_kinds = [:country, :currency, :language, :pno_format, :address_format, :shipment_type, :pclass, :mobile, :invoice, :goods, :monthly_cost]
+        valid_kinds.collect! do |valid_kind|
+          [valid_kind.to_s.singularize.to_sym, valid_kind.to_s.pluralize.to_sym]
+        end
+        valid_kinds.flatten!
+        kind = kind.to_s.pluralize.to_sym
+
+        unless kind.is_a?(String) || kind.is_a?(Symbol)
+          raise ::Klarna::API::KlarnaArgumentError, "Not a valid kind: #{kind.inspect}. Expects a symbol or a string: #{valid_kinds.join(', ')}"
+        end
+
+        unless valid_kinds.include?(kind.to_s.downcase.to_sym)
+          raise ::Klarna::API::KlarnaArgumentError, "Not a valid kind: #{kind.inspect}. Valid kinds: #{valid_kinds.join(', ')}"
+        end
+
+        kind.to_s.upcase.to_sym
+      end
+
+      # Parse, validate, and cast a method argument before RPC-call.
+      #
+      def validate_arg(value, cast_to, format_expression, strip_expression = nil, &block)
+        raise ::Klarna::API::KlarnaArgumentError,
+          "Argument cast_to should be Symbol, but was #{cast_to.class.name}." unless cast_to.is_a?(Symbol)
+        raise ::Klarna::API::KlarnaArgumentError,
+          "Argument regexp should be Regexp, but was #{format_expression.class.name}." unless format_expression.is_a?(Regexp)
+        raise ::Klarna::API::KlarnaArgumentError,
+          "Argument strip should be Regexp, but was #{strip_expression.class.name}." unless strip_expression.is_a?(Regexp)
+
+        value = value.to_s.gsub(strip_expression, '') if strip_expression
+
+        unless value.to_s =~ format_expression
+          raise ::Klarna::API::KlarnaArgumentError, "Invalid argument: #{value.inspect}. Expected format: #{format_expression.inspect}"
+        end
+
+        # Pass value to block - for type casting, etc. - if given.
+        value = block.call(value) if block_given?
+
+        value.tap do |v|
+          case cast_to
+          when :string then v.to_s
+          when :integer then v.to_i
+          when :decimal then v.to_f # number of decimals?
+          when :date then v # TODO
+          else
+            raise ::Klarna::API::KlarnaArgumentError, "Invalid cast_to value: #{cast_to.inspect}. "
+          end
         end
       end
 
-      def country_id_for(country)
-        begin
-          country.is_a?(Fixnum) ? country : ::Klarna::API::Countries.const_get(country.to_s.upcase.to_sym)
-        rescue
-          raise "Invalid country: #{country.inspect}"
+      def parse_flags(constant_name, flags)
+        if flags.is_a?(Hash)
+          flags = flags.sum { |k,v|
+            ::Klarna::API.const_get(constant_name.to_s.upcase.to_sym)[k.to_s.upcase.to_sym]
+          }
+        else
+          flags
         end
-      end
-
-      def language_id_for(language)
-        begin
-          language.is_a?(Fixnum) ? language : ::Klarna::API::Languages.const_get(language.to_s.upcase.to_sym)
-        rescue
-          raise "Invalid language: #{lang.inspect}"
-        end
+        flags.to_i
       end
 
       def digest(*args)

@@ -1,0 +1,37 @@
+# Pclass id number, Description, Amount of months for part payment, Start fee, Invoice fee, Interest rate, Minimum purchase amount for pclass
+
+pclasses:
+  sek:
+    390:
+      pclass_id: 390
+      description: "Konto"
+      months: 24
+      start_fee: 0
+      invoice_fee: 2900
+      interest_rate: 1950
+      minimum_purchase_amount: 100
+    121:
+      pclass_id: 121
+      description: "6 m\303\245n"
+      months: 6
+      start_fee: 19500
+      invoice_fee: 2900
+      interest_rate: 0
+      minimum_purchase_amount: 100000
+    120:
+      pclass_id: 120
+      description: "3 m\303\245n"
+      months: 3
+      start_fee: 9500
+      invoice_fee: 2900
+      interest_rate: 0
+      minimum_purchase_amount: 100000
+
+  nok:
+    # Not available (for some reason)
+
+  dkk:
+    # Not available (for some reason)
+
+  eur:
+    # Not available (for some reason)

@@ -1,9 +1,9 @@
 %h3 Send Invoice
 %p Enter invoice number of an active invoice you would like to send.
 
-%form{:action => '/useful/send_invoice'}
+%form{:action => '/invoicing/send_invoice'}
   %p
-    = field "Invoice ID:", :invoice_id, :text, :size => 10
+    = field "Invoice ID:", :invoice_no, :text, :size => 10
     *
   %p
     = submit_button "Send"
