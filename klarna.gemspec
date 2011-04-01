@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.summary     = %{A Ruby wrapper for Klarna/Kreditor XML-RPC API.}
   s.description = s.summary
 
-  s.add_dependency 'activesupport', '2.3.11'
+  s.add_dependency 'activesupport'
   s.add_dependency 'i18n'
 
   s.add_development_dependency 'minitest'

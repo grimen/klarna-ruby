@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'bundler'
 Bundler.require(:default, :development)
+require 'active_support/all'
 require 'sinatra'
 require 'sinatra/mapping'
 require 'haml'

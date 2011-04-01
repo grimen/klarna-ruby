@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'bundler'
 Bundler.require(:default)
+require 'active_support/all'
 require 'pp'
 
 require File.expand_path("config/initializer", File.dirname(__FILE__)).to_s
