@@ -1,19 +1,16 @@
 # encoding: utf-8
+require 'klarna/api/methods/standard'
+require 'klarna/api/methods/invoicing'
+require 'klarna/api/methods/reservation'
+require 'klarna/api/methods/cost_calculations'
 
 module Klarna
   module API
     module Methods
-
-      autoload :Essential,    'klarna/api/methods/essential'
-      autoload :Useful,       'klarna/api/methods/useful'
-      autoload :Special,      'klarna/api/methods/special'
-      autoload :Reservation,  'klarna/api/methods/reservation'
-
-      include Essential
-      include Useful
-      include Special
-      include Reservation
-
+      include ::Klarna::API::Methods::Standard
+      include ::Klarna::API::Methods::Invoicing
+      include ::Klarna::API::Methods::Reservation
+      include ::Klarna::API::Methods::CostCalculations
     end
   end
 end

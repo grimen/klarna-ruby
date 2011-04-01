@@ -1,0 +1,6 @@
+# Public test stores.
+
+stores:
+  test:
+    id: 2
+    secret: lakrits

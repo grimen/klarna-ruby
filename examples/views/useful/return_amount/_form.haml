@@ -1,9 +1,9 @@
 %h3 Return Amount
 %p Enter an invoice number and the amount you will return from the invoice.
 
-%form{:action => '/useful/return_amount'}
+%form{:action => '/invoicing/return_amount'}
   %p
-    = field "Invoice ID:", :invoice_id, :text, :size => 10
+    = field "Invoice ID:", :invoice_no, :text, :size => 10
     *
   %p
     = field "Amount:", :amount, :text, :size => 6

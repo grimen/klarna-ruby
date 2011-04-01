@@ -30,5 +30,11 @@ module Klarna
         object.send :"#{key}=", value
       end
     end
+
+    def expose_protected_methods_in(*args)
+      args.each do |klass|
+        klass.send(:public, *[klass.protected_instance_methods, klass.private_instance_methods].flatten)
+      end
+    end
   end
 end

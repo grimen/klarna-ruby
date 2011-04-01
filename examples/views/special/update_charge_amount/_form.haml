@@ -3,7 +3,7 @@
 
 %form{:action => '/special/update_charge_amount'}
   %p
-    = field "Invoice ID:", :invoice_id, :text, :size => 10
+    = field "Invoice ID:", :invoice_no, :text, :size => 10
   %p
     %input{:name => :charge_type, :type => :radio, :value => '0', :checked => true}
       %label{:for => :charge_type}= "Shipment"

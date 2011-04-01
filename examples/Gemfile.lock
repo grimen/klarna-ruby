@@ -1,0 +1,32 @@
+PATH
+  remote: ..
+  specs:
+    klarna (0.1.0)
+      activesupport (= 2.3.11)
+      i18n
+
+GEM
+  remote: http://gemcutter.org/
+  specs:
+    activesupport (2.3.11)
+    haml (3.0.25)
+    i18n (0.5.0)
+    nokogiri (1.4.4)
+    rack (1.2.2)
+    sinatra (1.2.1)
+      rack (~> 1.1)
+      tilt (>= 1.2.2, < 2.0)
+    sinatra-mapping (1.2.0)
+      sinatra (>= 0.9.1.1)
+    tilt (1.2.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  activesupport (= 2.3.11)
+  haml
+  klarna!
+  nokogiri
+  sinatra
+  sinatra-mapping

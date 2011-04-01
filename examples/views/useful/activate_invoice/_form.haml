@@ -1,9 +1,9 @@
 %h3 Activate Invoice
 %p Enter invoice number of an passive invoice you would like to activate. Options: Fully, or partly.
 
-%form{:action => '/useful/activate_invoice'}
+%form{:action => '/invoicing/activate_invoice'}
   %p
-    = field "Invoice ID:", :invoice_id, :text, :size => 10
+    = field "Invoice ID:", :invoice_no, :text, :size => 10
     *
   %p
     = submit_button "Activate"

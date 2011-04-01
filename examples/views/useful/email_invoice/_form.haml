@@ -1,9 +1,9 @@
 %h3 E-mail Invoice
 %p Enter invoice number of an active invoice you would like to email.
 
-%form{:action => '/useful/email_invoice'}
+%form{:action => '/invoicing/email_invoice'}
   %p
-    = field "Invoice ID:", :invoice_id, :text, :size => 10
+    = field "Invoice ID:", :invoice_no, :text, :size => 10
     *
   %p
     = submit_button "Send"

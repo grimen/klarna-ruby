@@ -1,14 +1,18 @@
 require 'rubygems'
+require 'bundler'
+Bundler.require(:default, :development)
 require 'sinatra'
 require 'sinatra/mapping'
+require 'haml'
 
-require 'klarna_initializer'
+require File.join(File.dirname(__FILE__), 'initializer').to_s
+
+# CAUTION: This code haven't been updated to reflect the library - TODO.
 
 # == Initialize a Klarna API-client.
 
-@@klarna =
 begin
-  client = ::Klarna::API::Client.new(::Klarna.store_id, ::Klarna.store_secret)
+  @@klarna = ::Klarna::API::Client.new(::Klarna.store_id, ::Klarna.store_secret)
 rescue Klarna::API::Errors::KlarnaCredentialsError => e
   puts e
 rescue ::Klarna::API::Errors::KlarnaServiceError => e
@@ -135,15 +139,15 @@ helpers do
 
   def process_reservation_details(params)
     line_items = []
-    line_items << ::Klarna.create_goods(params[:'product[0]_quantity'], params[:'product[0]_article_id]'], params[:'product[0]_title'], params[:'product[0]_price'], params[:'product[0]_vat'], params[:'product[0]_discout'])
-    line_items << ::Klarna.create_goods(params[:'product[1]_quantity'], params[:'product[1]_article_id]'], params[:'product[1]_title'], params[:'product[1]_price'], params[:'product[1]_vat'], params[:'product[1]_discout'])
+    line_items << ::Klarna.make_goods(params[:'product[0]_quantity'], params[:'product[0]_article_no]'], params[:'product[0]_title'], params[:'product[0]_price'], params[:'product[0]_vat'], params[:'product[0]_discout'])
+    line_items << ::Klarna.make_goods(params[:'product[1]_quantity'], params[:'product[1]_article_no]'], params[:'product[1]_title'], params[:'product[1]_price'], params[:'product[1]_vat'], params[:'product[1]_discout'])
 
-    delivery_address = ::Klarna::API.create_reservation_address(params[:delivery_first_name], params[:delivery_last_name], params[:delivery_street_address], params[:delivery_postal_code], params[:delivery_city], params[:delivery_country], params[:delivery_house_number])
-    invoicing_address = ::Klarna::API.create_reservation_address(params[:invoicing_first_name], params[:invoicing_last_name], params[:invoicing_street_address], params[:invoicing_postal_code], params[:invoicing_city], params[:invoicing_country], params[:delivery_house_number])
+    delivery_address = ::Klarna::API.make_reservation_address(params[:delivery_first_name], params[:delivery_last_name], params[:delivery_street_address], params[:delivery_postal_code], params[:delivery_city], params[:delivery_country], params[:delivery_house_number])
+    invoicing_address = ::Klarna::API.make_reservation_address(params[:invoicing_first_name], params[:invoicing_last_name], params[:invoicing_street_address], params[:invoicing_postal_code], params[:invoicing_city], params[:invoicing_country], params[:delivery_house_number])
 
-    country = ::Klarna::API.country_id_for(params[:currency])
-    language = ::Klarna::API.language_id_for(params[:language])
-    currency = ::Klarna::API.currency_id_for(params[:currency])
+    country = ::Klarna::API.id_for(:country, params[:currency])
+    language = ::Klarna::API.id_for(:language, params[:language])
+    currency = ::Klarna::API.id_for(:currency, params[:currency])
 
     client_ip = @env['REMOTE_ADDR']
     pclass = -1
@@ -170,29 +174,33 @@ end
 
 # == Essential
 
+# FIXME
 get '/essential/calculate_monthly_cost' do
-  # FIXME
   @result = @@klarna.calculate_monthly_cost(params[:sum] * 100, params[:currency], params[:months], params[:month_fee])
   haml :"essential/calculate_monthly_cost/result"
 end
 
+# FIXME: Port to new API.
 get '/essential/get_addresses' do
-  @result = @@klarna.get_addresses(params[:pno], ::Klarna::API::PersonalNumberFormats::SE)
+  @result = @@klarna.get_addresses(
+      params[:pno],
+      ::Klarna::API::PNO_FORMATS[:SE]
+    )
   haml :"essential/get_addresses/result"
 end
 
 get '/essential/add_transaction' do
-  goods_list = nil # ::Klarna.create_goods(params[:quantity], params[:article_id], t, price, vat, discount)
-  address = ::Klarna::API.create_address(params[:care_of], params[:street_address], params[:postal_code], params[:city], params[:country], params[:phone], params[:mobile], params[:email])
+  goods_list = nil # ::Klarna.make_goods(params[:quantity], params[:article_no], t, price, vat, discount)
+  address = ::Klarna::API.make_address(params[:care_of], params[:street_address], params[:postal_code], params[:city], params[:country], params[:phone], params[:mobile], params[:email])
   ip = @env['REMOTE_ADDR']
   password = nil
   new_password = nil
-  currency = ::Klarna::API.currency_id_for(params[:currency])
-  country = ::Klarna::API.country_id_for(params[:country])
-  language = ::Klarna::API.language_id_for(params[:language])
+  currency = ::Klarna::API.id_for(:currency, params[:currency])
+  country = ::Klarna::API.id_for(:country, params[:country])
+  language = ::Klarna::API.id_for(:language, params[:language])
 
-  @result = @@klarna.get_addresses(
-      params[:store_user_id],
+  @result = @@klarna.add_transaction(
+      params[:invoicing],
       params[:order_id],
       goods_list,
       params[:shipping_fee],
@@ -210,77 +218,77 @@ get '/essential/add_transaction' do
   haml :"essential/add_transaction/result"
 end
 
-# == Useful
+# == Invoicing
 
-get '/useful/has_account' do
+get '/invoicing/has_account' do
   @result = @@klarna.has_account?(params[:pno])
   haml :"essential/send_invoice/result"
 end
 
-get '/useful/activate_invoice' do
-  @result = @@klarna.activate_invoice(params[:invoice_id])
+get '/invoicing/activate_invoice' do
+  @result = @@klarna.activate_invoice(params[:invoice_no])
   haml :"essential/activate_invoice/result"
 end
 
-get '/useful/credit_invoice' do
-  @result = @@klarna.credit_invoice(params[:invoice_id], params[:credit_id])
+get '/invoicing/credit_invoice' do
+  @result = @@klarna.credit_invoice(params[:invoice_no], params[:credit_id])
   haml :"essential/credit_invoice/result"
 end
 
-get '/useful/delete_invoice' do
-  @result = @@klarna.delete_invoice(params[:invoice_id])
+get '/invoicing/delete_invoice' do
+  @result = @@klarna.delete_invoice(params[:invoice_no])
   haml :"essential/delete_invoice/result"
 end
 
-get '/useful/return_amount' do
-  @result = @@klarna.return_amount(params[:invoice_id], params[:amount], params[:vat])
+get '/invoicing/return_amount' do
+  @result = @@klarna.return_amount(params[:invoice_no], params[:amount], params[:vat])
   haml :"essential/return_amount/result"
 end
 
-get '/useful/email_invoice' do
-  @result = @@klarna.email_invoice(params[:invoice_id])
+get '/invoicing/email_invoice' do
+  @result = @@klarna.email_invoice(params[:invoice_no])
   haml :"essential/email_invoice/result"
 end
 
-get '/useful/send_invoice' do
-  @result = @@klarna.send_invoice(params[:invoice_id])
+get '/invoicing/send_invoice' do
+  @result = @@klarna.send_invoice(params[:invoice_no])
   haml :"essential/send_invoice/result"
 end
 
 # == Special
 
 get '/special/update_charge_amount' do
-  @result = @@klarna.update_charge_amount(params[:invoice_id], params[:charge_type], params[:new_amount])
+  @result = @@klarna.update_charge_amount(params[:invoice_no], params[:charge_type], params[:new_amount])
   haml :"special/update_charge_amount/result"
 end
 
 get '/special/update_goods_quantity' do
-  @result = @@klarna.update_goods_quantity(params[:invoice_id], params[:article_id], params[:quantity])
+  @result = @@klarna.update_goods_quantity(params[:invoice_no], params[:article_no], params[:quantity])
   haml :"special/update_goods_quantity/result"
 end
 
 get '/special/update_order_number' do
-  @result = @@klarna.update_order_number(params[:invoice_id], params[:new_order_id])
+  @result = @@klarna.update_order_number(params[:invoice_no], params[:new_order_id])
   haml :"special/update_order_number/result"
 end
 
 get '/special/invoice_address' do
-  @result = @@klarna.get_invoice_address(params[:invoice_id])
+  @result = @@klarna.get_invoice_address(params[:invoice_no])
   haml :"special/invoice_address/result"
 end
 
 get '/special/invoice_amount' do
-  @result = @@klarna.get_invoice_amount(params[:invoice_id])
+  @result = @@klarna.get_invoice_amount(params[:invoice_no])
   haml :"special/invoice_amount/result"
 end
 
 get '/special/is_invoice_paid' do
-  @result = @@klarna.invoice_paid?(params[:invoice_id])
+  @result = @@klarna.invoice_paid?(params[:invoice_no])
   haml :"special/is_invoice_paid/result"
 end
 
 get '/special/get_pclasses' do
-  currency = ::Klarna::API.currency_id_for(params[:currency])
+  currency = ::Klarna::API.id_for(:currency, params[:currency])
   @result = @@klarna.get_pclasses(currency)
   haml :"special/get_pclasses/result"
 end
@@ -289,15 +297,15 @@ end
 
 get '/reservation/reserve_amount' do
   line_items = []
-  line_items << ::Klarna.create_goods(params[:'product[0]_quantity'], params[:'product[0]_article_id]'], params[:'product[0]_title'], params[:'product[0]_price'], params[:'product[0]_vat'], params[:'product[0]_discout'])
-  line_items << ::Klarna.create_goods(params[:'product[1]_quantity'], params[:'product[1]_article_id]'], params[:'product[1]_title'], params[:'product[1]_price'], params[:'product[1]_vat'], params[:'product[1]_discout'])
+  line_items << ::Klarna.make_goods(params[:'product[0]_quantity'], params[:'product[0]_article_no]'], params[:'product[0]_title'], params[:'product[0]_price'], params[:'product[0]_vat'], params[:'product[0]_discout'])
+  line_items << ::Klarna.make_goods(params[:'product[1]_quantity'], params[:'product[1]_article_no]'], params[:'product[1]_title'], params[:'product[1]_price'], params[:'product[1]_vat'], params[:'product[1]_discout'])
 
-  delivery_address = ::Klarna::API.create_reservation_address(params[:delivery_first_name], params[:delivery_last_name], params[:delivery_street_address], params[:delivery_postal_code], params[:delivery_city], params[:delivery_country], params[:delivery_house_number])
-  invoicing_address = ::Klarna::API.create_reservation_address(params[:invoicing_first_name], params[:invoicing_last_name], params[:invoicing_street_address], params[:invoicing_postal_code], params[:invoicing_city], params[:invoicing_country], params[:delivery_house_number])
+  delivery_address = ::Klarna::API.make_reservation_address(params[:delivery_first_name], params[:delivery_last_name], params[:delivery_street_address], params[:delivery_postal_code], params[:delivery_city], params[:delivery_country], params[:delivery_house_number])
+  invoicing_address = ::Klarna::API.make_reservation_address(params[:invoicing_first_name], params[:invoicing_last_name], params[:invoicing_street_address], params[:invoicing_postal_code], params[:invoicing_city], params[:invoicing_country], params[:delivery_house_number])
 
-  country = ::Klarna::API.country_id_for(params[:currency])
-  language = ::Klarna::API.language_id_for(params[:language])
-  currency = ::Klarna::API.currency_id_for(params[:currency])
+  country = ::Klarna::API.id_for(:country, params[:currency])
+  language = ::Klarna::API.id_for(:language, params[:language])
+  currency = ::Klarna::API.id_for(:currency, params[:currency])
 
   client_ip = @env['REMOTE_ADDR']
   pclass = -1

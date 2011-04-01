@@ -5,17 +5,6 @@ module Klarna
   module API
     module Errors
 
-      LOCALES_ROOT = File.join(File.dirname(__FILE__), 'locales')
-
-      OLD_ERROR_CODES = {
-        -1   => :legacy_error1,
-        -2   => :legacy_error2,
-        -3   => :legacy_error3,
-        -4   => :legacy_error4,
-        -5   => :legacy_error5,
-        -99   => :unspecified_error
-      }.freeze
-
       ERROR_CODES = {
         1103  => :estore_overrun,
         1104  => :estore_blacklisted,
@@ -113,9 +102,7 @@ module Klarna
         9117  => :currency,
         9118  => :currency_country_pnoencoding,
         9119  => :timeout
-      }.merge(OLD_ERROR_CODES).freeze
-
-      KlarnaStandardError = ::Class.new(::StandardError)
+      }.freeze
 
       class KlarnaStandardError < ::StandardError
         def initialize(message)
@@ -124,7 +111,15 @@ module Klarna
         end
       end
 
-      KlarnaCredentialsError = ::Class.new(KlarnaStandardError)
+      class KlarnaArgumentError < ::ArgumentError
+        def initialize(message)
+          ::Klarna.log message, :error
+          super(message)
+        end
+      end
+
+      class KlarnaCredentialsError < KlarnaStandardError
+      end
 
       class KlarnaServiceError < ::XMLRPC::FaultException
         alias :error_code :faultCode
@@ -132,7 +127,7 @@ module Klarna
 
         def initialize(error_code, error_key)
           localized_error_message = ::Klarna::API::Errors.error_message(error_key)
-          message = ::Klarna.mode == :test ? "#{error_message} (#{error_key}): #{localized_error_message}" : localized_error_message
+          message = ::Klarna.mode == :test ? "#{error_key} (#{[error_code, ERROR_CODES[error_code]].compact.join(' - ')})" : localized_error_message
           ::Klarna.log message, :error
           super(error_code, message)
         end
@@ -142,36 +137,15 @@ module Klarna
         end
       end
 
-      # InvalidStoreSecretError < ::Class.new(::Klarna::API::Error)
-
-      # Lazy-generate all possible errors as error classes with correct error code
-      # and localized error message.
-      #
-      # == Sort of generates:
-      #
-      #   InvalidStoreSecretError < ::Class.new(::Klarna::API::Error)
-      #   ...
-      #
-      # CODES.each do |error_code, error_key|
-      #   error_class_name = "#{error_key}_error".classify
-      #   ::Object.const_set(error_class_name, ::Class.new(::Klarna::API::Error))
-      #   error_class_name.classify.class_eval do
-      #     def initialize
-      #       @faultCode = error_code
-      #       @faultString = ::Klarna::API::Errors.translate(error_key)
-      #     end
-      #   end
-      # end
-
       class << self
 
         # Lookup localized string value for a specified error/exception code or key.
         #
         def error_message(id_or_key)
           key = id_or_key.is_a?(Fixnum) ? ERROR_CODES[id_or_key] : id_or_key
-          # FIXME: ::I18n.translate(key, :scope => [:klarna, :errors])
           key
         end
+        alias :localized_error_message :error_message
 
       end
 

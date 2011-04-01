@@ -1,0 +1,10 @@
+---
+test:
+  store_id: 2
+  store_secred: lakrits
+  store_pclasses:
+
+production:
+  store_id: 2
+  store_secred: lakrits
+  store_pclasses:
