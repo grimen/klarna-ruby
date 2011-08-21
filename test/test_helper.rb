@@ -5,12 +5,10 @@ Bundler.require
 $:.unshift File.dirname(__FILE__)
 
 require 'mocha'
-# require 'turn' # FIXME: I don't get this...appending this after Minitest and it tests don't show up.
 require 'minitest/unit'
 require 'minitest/spec'
 require 'minitest/pride'
 require 'minitest/autorun'
-
 
 require 'klarna'
 
