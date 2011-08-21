@@ -20,6 +20,7 @@ x [feature]: Implement the last missing Invoicing methods
 * [feature]: Implement Reservation methods
 * [feature]: Klarna::DSL - wrapper DSL for less sucky integrations
 * [feature]: Bring back "examples/web" - probably not working at all now.
+* [feature]: Rack middleware?
 
 
 == MAYBE
