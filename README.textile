@@ -1,4 +1,4 @@
-h1. KLARNA
+h1. KLARNA "!https://secure.travis-ci.org/merchii/klarna-ruby.png!":http://travis-ci.org/merchii/klarna-ruby
 
 _A Ruby wrapper for the Klarna XML-RPC API._
 
