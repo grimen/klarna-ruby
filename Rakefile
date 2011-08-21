@@ -16,7 +16,7 @@ end
 desc 'Generate gem documentation for klarna.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'Klarna/Kreditor Ruby API-wrapper Documentation'
+  rdoc.title    = 'Klarna Ruby API-wrapper Documentation'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README.textile')
   rdoc.rdoc_files.include('lib/**/*.rb')
