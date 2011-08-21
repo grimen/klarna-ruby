@@ -1,54 +1,72 @@
-h1. Klarna
+h1. KLARNA
 
-_A Ruby wrapper for Klarna/Kreditor XML-RPC API._
+_A Ruby wrapper for the Klarna XML-RPC API._
 
-h2. Introduction
+h2. What is Klarna?
 
-...
+*"Klarna":http://klarna.com* is a payment solution with focus on e-commerce. Visit "klarna.com":http://klarna.com for more information, or why not "Wikipedia: Klarna":http://en.wikipedia.org/wiki/Klarna. We might be biased, but at "Merchii":http://merchii.com we currently consider Klarna the most convenient online payment solution that exists - and that's why we lean on it.
 
 *Supported countries:*
 
 Sweden (SE), Norway (NO), Denmark (DK), Finland (FI), Germany (DE), Netherlands (NL).
-
-*Klarna Basics:*
-
-* "Overview":http://integration.klarna.com/index.php/component/content/article/433
-* "Detailed":http://integration.klarna.com/step-by-step/checkout
-* "Checkout":http://integration.klarna.com/step-by-step/checkout-advanced
-* "Implementation Checklist":http://integration.klarna.com/step-by-step/checklist
 
 h2. Setup
 
 Install the gem:
 
 <pre>
-  $ sudo gem install klarna
+  $ gem install klarna
 </pre>
 
+...or if you use "Bundler":http://gembundler.com:
+
+@Gemfile@:
+
+<pre>
+  gem 'klarna'
+</pre>
+
+...and @$ bundle install@.
+
 h2. Usage
+
+Trivial example looking up an address using - in this case - a Swedish SSN:
 
 <pre>
   require 'rubygems'
   require 'klarna'
 
-  Klarna.setup do |c|
-    c.store_id = 123
-    c.store_secret = 'AbCdEfGh123'
+  Klarna.configure do |c|
+    c.store_id = 2
+    c.store_secret = 'lakrits'
+
+    c.mode = :test
+    c.http_logging = false
   end
 
-  Klarna::API.client.get_addresses(...)
+  client = Klarna::API::Client.new
+
+  client.get_addresses("430415-8399", :SE)
 </pre>
+
+See the code/docs for more information.
 
 h2. Testing
 
-Three ways...
+A couple of ways...
 
 *Specs*
 
 To run unit/integration tests, simply do:
 
 <pre>
-  $ rake test
+  $ bundle exec rake test
+</pre>
+
+...or if you use "Guard":http://github.com/guard/guard:
+
+<pre>
+  $ bundle exec guard
 </pre>
 
 *Dummie client*
@@ -58,7 +76,7 @@ To run unit/integration tests, simply do:
   $ ruby console.rb
 </pre>
 
-*Sinatra app*
+*Web/Sinatra app*
 
 1. Start the server...
 
@@ -72,6 +90,8 @@ To run unit/integration tests, simply do:
 2. Open it up!
 
 @http://localhost:4567@
+
+*NOTE:* The web app actions/forms are probably completely broken currently as it hasn't been updated to reflect the current library implementation.
 
 h2. Debugging
 
@@ -97,7 +117,15 @@ h2. Tools
 * "XML-RPC Client":http://ditchnet.org/xmlrpc/ for XML-RPC debugging on OS X.
 * "Wireshark":http://wireshark.org for platform-independent protocol sniffing, useful for debugging XML-RPC requests/responses.
 
+h2. Notes
+
+This gem was developed for our own requirements at "Merchii":http://github.com/merchii, so feel free to send pull-requests with enhancements of any kind (features, bug-fixes, documentation, tests, etc.) to make it better or useful for you as well.
+
+h2. To-do
+
+This is not a complete implementation, but not far from it though. I had bigger plans way back when we wrote this, but since I assume Klarna will release a completely new API soon (_Klarna 2.0_ which I assume will be REST API?) - we're not sure we will bother to "finish" the planned features for the current XML-RPC API. Time will tell. For more details, see the "TODO":https://github.com/merchii/klarna-ruby/blob/master/TODO.
+
 h2. License
 
 Released under the MIT license.
-Copyright (c) "Jonas Grimfelt":http://github.com/grimen for "Merchii":http://merchii.com
+Copyright (c) "Jonas Grimfelt":http://github.com/grimen, "Merchii":http://merchii.com
