@@ -6,7 +6,7 @@ require 'sinatra'
 require 'sinatra/mapping'
 require 'haml'
 
-require File.join(File.dirname(__FILE__), 'initializer').to_s
+require File.expand_path("config/initializer", File.dirname(__FILE__)).to_s
 
 # CAUTION: This code haven't been updated to reflect the library - TODO.
 
@@ -120,8 +120,8 @@ helpers do
     end <<
     capture_haml do
       haml_tag(:select, :name => :shipment_type) do
-        haml_tag(:option, "Standard", :value => ::Klarna::API::ShipmentTypes::NORMAL)
-        haml_tag(:option, "Express", :value => ::Klarna::API::ShipmentTypes::EXPRESS)
+        haml_tag(:option, "Standard", :value => ::Klarna::API::SHIPMENT_TYPES[:NORMAL])
+        haml_tag(:option, "Express", :value => ::Klarna::API::SHIPMENT_TYPES[:EXPRESS])
       end
     end
   end
