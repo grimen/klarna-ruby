@@ -1,14 +1,12 @@
-# encoding: utf-8
-require 'rubygems'
-require 'bundler'
-Bundler.require
+# -*- encoding: utf-8 -*-
 $:.unshift File.dirname(__FILE__)
 
-require 'mocha'
+require 'mocha' # REVIEW: Had to place this before MiniTest - if placed after ~100 failing specs. :S
 require 'minitest/unit'
 require 'minitest/spec'
 require 'minitest/pride'
 require 'minitest/autorun'
+
 
 require 'klarna'
 
