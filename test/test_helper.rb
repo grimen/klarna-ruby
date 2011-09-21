@@ -7,7 +7,6 @@ require 'minitest/spec'
 require 'minitest/pride'
 require 'minitest/autorun'
 
-
 require 'klarna'
 
 Dir[File.join(File.dirname(__FILE__), *%w[support ** *.rb]).to_s].each { |f| require f }
@@ -16,9 +15,9 @@ MiniTest::Unit::TestCase.class_eval do
   include Klarna::AssertionsHelper
 end
 
-VALID_STORE_ID = 2
-VALID_STORE_SECRET = 'lakrits'
-VALID_COUNTRY = :SE
+VALID_STORE_ID      = ENV['KLARNA_ESTORE_ID'].presence || 2 # NOTE: This estore-id used to work for testing until 2011.09.
+VALID_STORE_SECRET  = ENV['KLARNA_ESTORE_SECRET'].presence || 'lakrits' # NOTE: This estore-secret used to work for testing until 2011.09.
+VALID_COUNTRY       = :SE
 
 Klarna.store_config_file = File.join(File.dirname(__FILE__), 'fixtures', 'klarna.yml')
 
