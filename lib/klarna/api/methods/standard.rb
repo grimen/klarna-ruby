@@ -22,7 +22,7 @@ module Klarna
         #   In the other Nordic countries you will have to have input fields for name, last name, street name,
         #   zip code and city so that the customer can enter this information by himself.
         #
-        def get_addresses(pno, pno_encoding, address_type = :OLD)
+        def get_addresses(pno, pno_encoding, address_type = :GIVEN)
           pno = pno.to_s.gsub(/[\W]/, '')
           pno_encoding = ::Klarna::API.id_for(:pno_format, pno_encoding)
           address_type = ::Klarna::API.id_for(:address_format, address_type)
@@ -31,7 +31,8 @@ module Klarna
             self.store_id,
             self.digest(pno),
             pno_encoding,
-            address_type
+            address_type,
+            self.client_ip
           ]
           self.call(:get_addresses, *params).tap do |result|
             result = result.first

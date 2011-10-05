@@ -10,17 +10,17 @@ module Klarna
       END_POINT = {
         :test => {
           :protocol => 'http',
-          :host => 'beta-test.klarna.com',
-          :port => 4567
+          :host => 'payment.klarna.com',
+          :port => 80
         },
         :production => {
-          :protocol => 'https',
+          :protocol => 'http',
           :host => 'payment.klarna.com',
-          :port => 80 # TODO: For SSL, port 4568 should be used
+          :port => 80
         }
       }.freeze
 
-      PROTOCOL_ENCODING = 'iso-8859-1'.freeze
+      PROTOCOL_ENCODING = 'iso-8859-1'.freeze # ['UTF-8', 'ISO-8859-1', 'US-ASCII'].freeze
       PROTOCOL_VERSION = '4.0'.freeze
 
       # -----------------------------------------------------------------------
