@@ -9,7 +9,17 @@ module Klarna
 
       include ::Klarna::API::Methods
 
-      attr_accessor :store_id, :store_secret, :mode, :timeout, :last_request_headers, :last_request_params, :last_response
+      attr_accessor :store_id, 
+                    :store_secret,
+                    :mode,
+                    :timeout,
+                    :last_request_headers,
+                    :last_request_params,
+                    :last_response,
+                    :client_ip,
+                    :protocol,
+                    :host,
+                    :port
 
       def initialize(*args)
         self.store_id = args.shift || ::Klarna.store_id
@@ -20,6 +30,7 @@ module Klarna
         end
 
         options = args.extract_options!
+        self.client_ip = options[:client_ip].presence || '127.0.0.1'
         self.mode = options.key?(:mode) ? options[:mode] : ::Klarna.mode
         self.timeout = options.key?(:timeout) ? options[:timeout] : 10 # seconds
 
@@ -68,15 +79,15 @@ module Klarna
       alias :use_ssl? :ssl?
 
       def protocol
-        ::Klarna::API::END_POINT[self.mode][:protocol]
+        @protocol ||= ::Klarna::API::END_POINT[self.mode][:protocol]
       end
 
       def host
-        ::Klarna::API::END_POINT[self.mode][:host]
+        @host ||= ::Klarna::API::END_POINT[self.mode][:host]
       end
 
       def port
-        ::Klarna::API::END_POINT[self.mode][:port]
+        @port ||= ::Klarna::API::END_POINT[self.mode][:port]
       end
 
       def endpoint_uri
@@ -89,8 +100,9 @@ module Klarna
         #
         def content_type_headers
           {
-            :'Accept-Charset' => ::Klarna::API::PROTOCOL_ENCODING,
+            :'Accept-Encoding' => 'deflate,gzclient_ip',
             :'Content-Type' => "text/xml;charset=#{::Klarna::API::PROTOCOL_ENCODING}",
+            :'Accept-Charset' => 'iso-8859-1', # REVISIT: 'UTF-8,ISO-8859-1,US-ASCII',
             :'Connection' => 'close',
             :'User-Agent' => 'ruby/xmlrpc' # Note: Default "User-Agent" gives 400-error.
           }.with_indifferent_access

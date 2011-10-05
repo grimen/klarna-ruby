@@ -39,10 +39,14 @@ end
 
 def valid_credentials!
   Klarna.setup do |c|
-    c.store_id = VALID_STORE_ID
+    c.store_id = VALID_STORE_ID.to_i
     c.store_secret = VALID_STORE_SECRET
     c.country = VALID_COUNTRY
-    c.mode = :test
-    c.http_logging = false
+    c.mode = :production # NOTE: Actually not production unless test-mode is disabled in the Klarna admin pages.
+    c.http_logging = (ENV['KLARNA_DEBUG'].to_s =~ /(true|1)/) || false
   end
+end
+
+def digest(*args)
+  Klarna::API::Client.digest(*args)
 end

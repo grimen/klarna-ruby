@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'iconv'
 require 'digest/md5'
+require 'digest/sha2'
 require 'xmlrpc/base64'
 
 require 'klarna/api/constants'
@@ -144,17 +145,19 @@ module Klarna
           flags = flags.sum { |k,v|
             ::Klarna::API.const_get(constant_name.to_s.upcase.to_sym)[k.to_s.upcase.to_sym]
           }
-        else
-          flags
         end
         flags.to_i
       end
 
       def digest(*args)
         string = args.join(':')
-        iso_value = self.encode(string)
+        iso_value = self.encode(string) 
+        
+        
         hex_md5_digest = [*::Digest::MD5.hexdigest(iso_value)].pack('H*')
         base64_digest = ::XMLRPC::Base64.encode(hex_md5_digest).strip
+        hex_sha512_digest = [*Digest::SHA512.hexdigest(iso_value)].pack('H*')
+        base64_digest = ::XMLRPC::Base64.encode(hex_sha512_digest).strip
       end
 
       def encode(string, from_encoding = 'utf-8')
