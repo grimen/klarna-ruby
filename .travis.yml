@@ -8,7 +8,6 @@ rvm:
   - jruby
 env:
   # Don't get any ideas, this will only work with Klarna's test-server. ;)
-  - KLARNA_ESTORE_ID=1562
-  - KLARNA_ESTORE_SECRET=V6Y95XQ46ymmAWA
+  - KLARNA_ESTORE_ID=1562; KLARNA_ESTORE_SECRET=V6Y95XQ46ymmAWA
 notifications:
   disabled: true
