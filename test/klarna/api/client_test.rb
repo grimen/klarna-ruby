@@ -105,7 +105,7 @@ describe Klarna::API::Client do
             end
 
             it 'should be: http' do
-              # assert_equal 'http', @client.protocol
+              assert_equal 'http', @client.protocol
             end
           end
 
@@ -115,7 +115,7 @@ describe Klarna::API::Client do
             end
 
             it 'should be: https' do
-              # assert_equal 'https', @client.protocol
+              assert_equal 'https', @client.protocol
             end
           end
         end
@@ -131,7 +131,7 @@ describe Klarna::API::Client do
             end
 
             it 'should be: beta-test.klarna.com' do
-              # assert_equal @client.host, 'payment-beta.klarna.com'
+              assert_equal @client.host, 'payment-beta.klarna.com'
             end
           end
 
@@ -141,7 +141,7 @@ describe Klarna::API::Client do
             end
 
             it 'should be: payment.klarna.com' do
-              # assert_equal @client.host, 'payment.klarna.com'
+              assert_equal @client.host, 'payment.klarna.com'
             end
           end
         end
@@ -157,7 +157,7 @@ describe Klarna::API::Client do
             end
 
             it 'should be: 80' do
-              # assert_equal 80, @client.port
+              assert_equal 80, @client.port
             end
           end
 
@@ -167,7 +167,7 @@ describe Klarna::API::Client do
             end
 
             it 'should be: 443' do
-              # assert_equal 443, @client.port
+              assert_equal 443, @client.port
             end
           end
         end
@@ -179,7 +179,7 @@ describe Klarna::API::Client do
             end
 
             it 'should be: http://beta-test.klarna.com:80' do
-              # assert_equal 'http://beta-test.klarna.com:80', @client.endpoint_uri
+              assert_equal 'http://payment-test.klarna.com:80', @client.endpoint_uri
             end
           end
 
@@ -189,7 +189,7 @@ describe Klarna::API::Client do
             end
 
             it 'should be: https://payment.klarna.com:443' do
-              # assert_equal 'https://payment.klarna.com:443', @client.endpoint_uri
+              assert_equal 'https://payment.klarna.com:443', @client.endpoint_uri
             end
           end
 
