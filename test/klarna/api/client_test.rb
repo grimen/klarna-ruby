@@ -179,7 +179,7 @@ describe Klarna::API::Client do
             end
 
             it 'should be: http://beta-test.klarna.com:80' do
-              assert_equal 'http://payment-test.klarna.com:80', @client.endpoint_uri
+              assert_equal 'http://payment-beta.klarna.com:80', @client.endpoint_uri
             end
           end
 
