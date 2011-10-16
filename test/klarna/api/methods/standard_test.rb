@@ -3,7 +3,7 @@ require 'test_helper'
 
 describe Klarna::API::Methods::Standard do
 
-   # TODO: Mock responses.
+   # TODO: Mock responses using VCR.
 
   before do
     valid_credentials!
@@ -19,7 +19,8 @@ describe Klarna::API::Methods::Standard do
     expose_protected_methods_in @klarna.class
   end
 
-  # Spec: http://integration.klarna.com/en/api/standard-integration/functions/getaddresses
+  # Spec:
+  #   http://integration.klarna.com/en/api/standard-integration/functions/getaddresses
   describe '#get_addresses' do
     it 'should be defined' do
       assert_respond_to @klarna, :get_addresses
@@ -66,7 +67,8 @@ describe Klarna::API::Methods::Standard do
     end
   end
 
-  # Spec: http://integration.klarna.com/en/api/standard-integration/functions/mkaddr
+  # Spec:
+  #   http://integration.klarna.com/en/api/standard-integration/functions/mkaddr
   describe '#make_address' do
     it 'should be defined' do
       assert_respond_to @klarna, :make_address
@@ -128,7 +130,8 @@ describe Klarna::API::Methods::Standard do
     end
   end
 
-  # Spec: http://integration.klarna.com/en/api/standard-integration/functions/mkgoodsflags
+  # Spec:
+  #   http://integration.klarna.com/en/api/standard-integration/functions/mkgoodsflags
   describe '#make_goods' do
     it 'should be defined' do
       assert_respond_to @klarna, :make_goods
@@ -225,11 +228,17 @@ describe Klarna::API::Methods::Standard do
     end
   end
 
-  # Spec: http://integration.klarna.com/en/api/advanced-integration/functions/hasaccount
+  # Spec:
+  #   http://integration.klarna.com/en/api/advanced-integration/functions/hasaccount
   describe '#has_account?' do
     it 'should be defined' do
       assert_respond_to @klarna, :has_account?
     end
+
+    # FIXME: Throws error "Unknown call (-99)". :S
+    it 'should be true' # do
+    #   assert_equal true, @klarna.has_account?("4304158399", :SE)
+    # end
   end
 
 end

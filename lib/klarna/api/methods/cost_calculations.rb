@@ -5,7 +5,7 @@ module Klarna
     module Methods
       module CostCalculations
 
-        # Purpose: Obtain pcalss values from Klarna.
+        # Purpose: Obtain pclass values from Klarna.
         #
         # == Note:
         #

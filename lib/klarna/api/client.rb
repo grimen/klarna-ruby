@@ -9,7 +9,7 @@ module Klarna
 
       include ::Klarna::API::Methods
 
-      attr_accessor :store_id, 
+      attr_accessor :store_id,
                     :store_secret,
                     :mode,
                     :timeout,
@@ -79,15 +79,15 @@ module Klarna
       alias :use_ssl? :ssl?
 
       def protocol
-        @protocol ||= ::Klarna::API::END_POINT[self.mode][:protocol]
+        @protocol = ::Klarna::API::END_POINT[self.mode][:protocol]
       end
 
       def host
-        @host ||= ::Klarna::API::END_POINT[self.mode][:host]
+        @host = ::Klarna::API::END_POINT[self.mode][:host]
       end
 
       def port
-        @port ||= ::Klarna::API::END_POINT[self.mode][:port]
+        @port = ::Klarna::API::END_POINT[self.mode][:port]
       end
 
       def endpoint_uri

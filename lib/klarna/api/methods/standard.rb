@@ -109,13 +109,12 @@ module Klarna
         # Check if a user has an account.
         #
         def has_account?(pno, pno_encoding)
-          # params = [
-          #   self.store_id,
-          #   self.digest(pno),
-          #   pno_encoding
-          # ]
-          # self.call(:has_account, *params)
-          raise NotImplementedError
+          params = [
+            self.store_id,
+            self.digest(pno),
+            pno_encoding
+          ]
+          self.call(:has_account, *params)
         end
 
       end
