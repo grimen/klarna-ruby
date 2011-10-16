@@ -21,7 +21,7 @@ x [issue]: Test the invoice activation in a proper way - not allowed in the Klar
 * [feature]: Implement Reservation methods
 * [feature]: Bring back "examples/web" - probably not working at all now.
 * [feature]: Rack middleware?
-
+* [refactor]: Only load activesupport-extensions we actually use.
 
 == MAYBE
 

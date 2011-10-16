@@ -1,9 +1,5 @@
-# encoding: utf-8
-# require 'rubygems'
-# require 'bundler'
-# Bundler.require
 require 'i18n'
-require 'active_support/all'
+require 'active_support/all' # TODO: Cherry-pick only what we use.
 
 module Klarna
 
