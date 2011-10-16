@@ -222,16 +222,32 @@ describe Klarna::API::Client do
         assert_respond_to @client, :digest
       end
 
-      it 'should calculate a valid digest secret for one value' do
-        # TODO
+      describe 'default behaviour' do
+        it 'should calculate a valid digest secret for one value' do
+          swap @client, :store_id => 123, :store_secret => "secret" do
+            assert_equal ::Klarna::API.digest(123, "value 123", "secret"), @client.send(:digest, "value 123")
+          end
+        end
+
+        it 'should calculate a valid digest secret for an array of values' do
+          swap @client, :store_id => 123, :store_secret => "secret" do
+            assert_equal ::Klarna::API.digest(123, "value 1", "value 2", "value 3", "secret"), @client.send(:digest, "value 1", "value 2", "value 3")
+          end
+        end
       end
 
-      it 'should calculate a valid digest secret for an array of values' do
-        # TODO
-      end
+      describe 'without estore-ID - some methods apparently need this' do
+        it 'should calculate a valid digest secret for one value' do
+          swap @client, :store_id => 123, :store_secret => "secret" do
+            assert_equal ::Klarna::API.digest("value 123", "secret"), @client.send(:digest, "value 123", :store_id => false)
+          end
+        end
 
-      it 'should raise error if specified value is nor a string or an array' do
-        # TODO
+        it 'should calculate a valid digest secret for an array of values' do
+          swap @client, :store_id => 123, :store_secret => "secret" do
+            assert_equal ::Klarna::API.digest("value 1", "value 2", "value 3", "secret"), @client.send(:digest, "value 1", "value 2", "value 3", :store_id => false)
+          end
+        end
       end
     end
 
