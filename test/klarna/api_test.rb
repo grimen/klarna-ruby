@@ -131,7 +131,7 @@ describe ::Klarna::API do
       end
     end
 
-    describe '.encode' do
+    describe '.decode' do
       it 'should be defined' do
         assert_respond_to ::Klarna::API, :decode
       end
