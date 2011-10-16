@@ -1,15 +1,16 @@
 
 == CURRENT
 
-x [feature]: Implement the last missing Invoicing methods
------
-* [feature]: Review/Implement something like: our_settype_integer, our_strip_string, our_settype_string (consider one generic method, e.g. parse(:price, value) - all validation/masking/casting in one place)
-* [feature]: Ensure valid string format/stripping (e.g. SSN, etc)
-* [feature]: Ensure correct params datatypes are submitted (validation - consider generic method)
+x [issue]: Test the invoice activation in a proper way - not allowed in the Klarna 2.0 API (for some weird reason...)
 
 
 == HIGH-PRIO
 
+* [feature]: Review/Implement something like: our_settype_integer, our_strip_string, our_settype_string (consider one generic method, e.g. parse(:price, value) - all validation/masking/casting in one place)
+* [feature]: Ensure valid string format/stripping (e.g. SSN, etc) using regular expressions
+* [feature]: Compare implementation with Klarna's new API 2.0
+* [feature]: Ensure correct params datatypes are submitted (validation - consider generic method)
+* [feature]: Klarna::DSL - wrapper DSL for less sucky integrations
 * [feature]: Implement #get_pclasses method to export pclasses as hash (and maybe export to YAML?)
 * [feature]: ActiveMerchant-integration (fork ActiveMerchant and add klarna as new gateway with "klarna-ruby" as dependency)
 
@@ -18,7 +19,6 @@ x [feature]: Implement the last missing Invoicing methods
 
 * [feature]: Finalize the rest of the specs for already implemented methods, commented out currently.
 * [feature]: Implement Reservation methods
-* [feature]: Klarna::DSL - wrapper DSL for less sucky integrations
 * [feature]: Bring back "examples/web" - probably not working at all now.
 * [feature]: Rack middleware?
 
@@ -26,3 +26,5 @@ x [feature]: Implement the last missing Invoicing methods
 == MAYBE
 
 * [feature]: Mock XML-responses by default to avoid live API calls, but allow live calls using ENV['REMOTE]=true
+
+    https://github.com/myronmarston/vcr

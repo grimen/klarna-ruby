@@ -12,7 +12,7 @@ module Klarna
 
         # Create an invoice.
         #
-        def add_invoice(store_user_id, order_id, goods_list, shipping_fee,
+        def add_invoice(store_user_id, order_id, articles, shipping_fee,
                             handling_fee, shipment_type, pno, first_name, last_name, address, client_ip,
                             currency, country, language, pno_encoding, pclass = nil, annual_salary = nil,
                             password = nil, ready_date = nil, comment = nil, rand_string = nil, new_password = nil, flags = nil)
@@ -23,13 +23,14 @@ module Klarna
           pno_encoding = ::Klarna::API.id_for(:pno_format, pno_encoding)
           pclass = pclass ? ::Klarna::API.id_for(:pclass, pclass) : -1
           flags = ::Klarna::API.parse_flags(:INVOICE, flags)
+          articles = Array.wrap(articles).compact
 
           params = [
             self.store_id,
             store_user_id,
-            self.digest(goods_list.collect { |g| g[:goods][:title] }, :store_id => false),
+            self.digest(articles.collect { |g| g[:goods][:title] }, :store_id => false),
             order_id,
-            goods_list,
+            articles,
             shipping_fee,
             shipment_type,
             handling_fee,
@@ -70,6 +71,7 @@ module Klarna
         def activate_invoice(invoice_no, articles = nil)
           # TODO: Parse/Validate invoice_no as :integer
           # TODO: Parse/Valdiate articles as array of articles
+          articles = Array.wrap(articles).compact
 
           params = [
             self.store_id,
@@ -79,7 +81,7 @@ module Klarna
           # Only partly?
           if articles.present?
             params << articles
-            params << self.digest(invoice_no, articles.collect { |a| a.join(':') }.join(':'))
+            params << self.digest(invoice_no, articles.collect { |a| [a[:goods][:artno], a[:qty]].join(':') }.join(':'))
             method = :activate_part
           else
             params << self.digest(invoice_no)
@@ -107,36 +109,37 @@ module Klarna
         # Give discounts for invoices.
         #
         def return_amount(invoice_no, amount, vat)
-          # params = [
-          #   self.store_id,
-          #   invoice_no,
-          #   amount,
-          #   vat,
-          #   self.digest(invoice_no)
-          # ]
-          # self.call(:return_amount, *params)
-          raise NotImplementedError
+          params = [
+            self.store_id,
+            invoice_no,
+            amount,
+            vat,
+            self.digest(invoice_no)
+          ]
+          self.call(:return_amount, *params) # raise NotImplementedError
         end
 
         # Return a invoice - optionally only partly.
         #
         def credit_invoice(invoice_no, credit_id, articles = nil)
-          # params = [
-          #   self.store_id,
-          #   invoice_no,
-          #   credit_id,
-          # ]
-          # # Only partly?
-          # if articles.present?
-          #   params << articles
-          #   params << self.digest(invoice_no, articles.collect { |a| a.join(':') }.join(':'))
-          #   method = :credit_part
-          # else
-          #   params << self.digest(invoice_no)
-          #   method = :credit_invoice
-          # end
-          # self.call(method, *params)
-          raise NotImplementedError
+          articles = Array.wrap(articles).compact
+
+          params = [
+            self.store_id,
+            invoice_no,
+            credit_id,
+          ]
+
+          if articles.present? # Only partly?
+            params << articles
+            params << self.digest(invoice_no, articles.collect { |a| [a[:goods][:artno], a[:qty]].join(':') }.join(':'))
+            method = :credit_part
+          else
+            params << self.digest(invoice_no)
+            method = :credit_invoice
+          end
+
+          self.call(method, *params)
         end
 
         # Send an active invoice to the customer via e-mail.
@@ -253,6 +256,13 @@ module Klarna
         #
         def invoice_amount(invoice_no, articles = nil)
           # TODO: Parse/Validate invoice_no as integer
+          articles = Array.wrap(articles).compact
+          artnos =
+            if articles.first.respond_to?(:key?) && articles.first.key?(:qty) && articles.first.key?(:artno)
+              articles
+            else
+              articles.collect { |a| {:artno => a[:goods][:artno], :qty => a[:qty]} }
+            end
 
           params = [
             self.store_id,
@@ -261,8 +271,8 @@ module Klarna
 
           # Only partly?
           if articles.present?
-            params << articles
-            params << self.digest(invoice_no, articles.collect { |a| a.join(':') }.join(':'))
+            params << artnos
+            params << self.digest(invoice_no, artnos.collect { |an| [an[:artno], an[:qty]].join(':') }.join(':'))
             method = :invoice_part_amount
           else
             params << self.digest(invoice_no)

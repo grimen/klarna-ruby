@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'rubygems'
 require 'bundler'
 Bundler.require(:default)
@@ -8,10 +10,24 @@ require File.expand_path("config/initializer", File.dirname(__FILE__)).to_s
 
 # == Initialize a Klarna API-client.
 
+klarna_accounts = {
+  :test => {
+    :id => 1562,
+    :secret => "V6Y95XQ46ymmAWA",
+    :mode => :test
+  },
+  :clubs => {
+    :id => 12102,
+    :secret => "Y9CeJ8LYqcp5jvQ",
+    :mode => :production
+  }
+}
+use = :clubs
+
 Klarna.configure do |c|
-  c.store_id = ENV['KLARNA_ESTORE_ID'].presence || 2
-  c.store_secret = ENV['KLARNA_ESTORE_SECRET'].presence || 'lakrits'
-  c.mode = :production
+  c.store_id = ENV['KLARNA_ESTORE_ID'].presence || klarna_accounts[use][:id]
+  c.store_secret = ENV['KLARNA_ESTORE_SECRET'].presence || klarna_accounts[use][:secret]
+  c.mode = (ENV['KLARNA_ESTORE_MODE'].presence && ENV['KLARNA_ESTORE_MODE'].to_sym) || klarna_accounts[use][:mode]
   c.http_logging = true
 end
 
@@ -25,10 +41,12 @@ end
 
 @@klarna.client_ip = '192.168.0.196'
 
+puts @@klarna.endpoint_uri.inspect
+
 puts ::Klarna::API::PNO_FORMATS[:SE].inspect
 
 print "SSN: "
-test_pno = "430415-8399" # gets.strip # "4304158399"
+test_pno = "820328-0154" # "4304158399" # gets.strip # "4304158399"
 
 puts "------------------------------"
 puts "eid: #{Klarna.store_id}"
@@ -47,15 +65,17 @@ puts @@klarna.get_addresses(test_pno, ::Klarna::API::PNO_FORMATS[:SE])
 
 order_items = []
 order_items << @@klarna.make_goods(1, "ABC1", "T-shirt 1", 1.00 * 100, 25)
-order_items << @@klarna.make_goods(1, "ABC2", "T-shirt 2", 7.00 * 100, 25)
-order_items << @@klarna.make_goods(1, "ABC3", "T-shirt 3", 17.00 * 100, 25)
+# order_items << @@klarna.make_goods(1, "ABC2", "T-shirt 2", 7.00 * 100, 25)
+# order_items << @@klarna.make_goods(1, "ABC3", "T-shirt 3", 17.00 * 100, 25)
 
-address = @@klarna.make_address("", "Junibackg. 42", "23634", "Hollviken", :SE, "076 526 00 00", "076 526 00 00", "karl.lidin@klarna.com")
+#address = @@klarna.make_address("", "Junibackg. 42", "23634", "Hollviken", :SE, "076 526 00 00", "076 526 00 00", "karl.lidin@klarna.com")
+address = @@klarna.make_address("", "Sollentunavägen 68", "18743", "Täby", :SE, "0702167225", "0702167225", "grimen@gmail.com")
 
-invoice_no = @@klarna.add_transaction('USER-8203280154', 'ORDER-1', order_items, 0, 0, :NORMAL, '4304158399', "Karl", "Lidin", address, '85.230.98.196', :SEK, :SE, :SV, :SE, nil, nil, nil, nil, nil, nil, nil, :TEST_MODE => true)
+# invoice_no = @@klarna.add_transaction("USER-#{test_pno}", 'ORDER-1', order_items, 0, 0, :NORMAL, test_pno, "Karl", "Lidin", address, '85.230.98.196', :SEK, :SE, :SV, :SE) #, nil, nil, nil, nil, nil, nil, nil, :TEST_MODE => true)
+invoice_no = @@klarna.add_transaction("USER-#{test_pno}", 'ORDER-1', order_items, 0, 0, :NORMAL, test_pno, "Jonas", "Grimfelt", address, '85.230.98.196', :SEK, :SE, :SV, :SE) #, nil, nil, nil, nil, nil, nil, nil, :TEST_MODE => true)
 
 pp "Invoice-no: #{invoice_no}"
-	
+
 # FIXME: Since Klarna API changed this fails even with the TEST_MODE (2) flag set.
 
 # invoice_url = @@klarna.activate_invoice(invoice_no)

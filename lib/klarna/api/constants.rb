@@ -10,17 +10,17 @@ module Klarna
       END_POINT = {
         :test => {
           :protocol => 'http',
-          :host => 'payment.klarna.com',
+          :host => 'payment-beta.klarna.com',
           :port => 80
         },
         :production => {
-          :protocol => 'http',
+          :protocol => 'https',
           :host => 'payment.klarna.com',
-          :port => 80
+          :port => 443
         }
       }.freeze
 
-      PROTOCOL_ENCODING = 'iso-8859-1'.freeze # ['UTF-8', 'ISO-8859-1', 'US-ASCII'].freeze
+      PROTOCOL_ENCODING = 'iso-8859-1'.freeze # NOTE: New API supports: ['UTF-8', 'ISO-8859-1', 'US-ASCII'].freeze
       PROTOCOL_VERSION = '4.0'.freeze
 
       # -----------------------------------------------------------------------

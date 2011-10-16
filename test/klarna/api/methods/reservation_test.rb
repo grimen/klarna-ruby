@@ -3,7 +3,7 @@ require 'test_helper'
 
 describe Klarna::API::Methods::Reservation do
 
-   # TODO: Mock responses.
+   # TODO: Mock responses using VCR.
 
   before do
     valid_credentials!

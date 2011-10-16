@@ -10,6 +10,14 @@ h2. What is Klarna?
 
 Sweden (SE), Norway (NO), Denmark (DK), Finland (FI), Germany (DE), Netherlands (NL).
 
+h2. Implementation/Background
+
+This gem was developed as a semi-1:1 implementation of the corresponding API implementations provided by Klarna (with a few simple justifications and heavily refactored methods). Klarnas official implementations were not implemented using OO patterns and as their implementation was changing very often without any notice/versioning I kept it simple as possible.
+
+Since Klarna 2.0 was released they'va refactored their implementations a lot which makes it a good idea to review this implementation as well. Like stated in the TODO I had a clean classy DSL in mind.
+
+This is not a complete implementation, but not far from it and enough for most use cases - a few of the more advanced API methods needs a review/revisit (code disabled now).
+
 h2. Setup
 
 Install the gem:
@@ -123,7 +131,7 @@ This gem was developed for our own requirements at "Merchii":http://github.com/m
 
 h2. To-do
 
-This is not a complete implementation, but not far from it though. I had bigger plans way back when we wrote this, but since I assume Klarna will release a completely new API soon (_Klarna 2.0_ which I assume will be REST API?) - we're not sure we will bother to "finish" the planned features for the current XML-RPC API. Time will tell. For more details, see the "TODO":https://github.com/merchii/klarna-ruby/blob/master/TODO.
+See the "TODO":https://github.com/merchii/klarna-ruby/blob/master/TODO.
 
 h2. License
 

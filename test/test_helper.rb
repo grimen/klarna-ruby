@@ -15,8 +15,8 @@ MiniTest::Unit::TestCase.class_eval do
   include Klarna::AssertionsHelper
 end
 
-VALID_STORE_ID      = ENV['KLARNA_ESTORE_ID'].presence || 2 # NOTE: This estore-id used to work for testing until 2011.09.
-VALID_STORE_SECRET  = ENV['KLARNA_ESTORE_SECRET'].presence || 'lakrits' # NOTE: This estore-secret used to work for testing until 2011.09.
+VALID_STORE_ID      = ENV['KLARNA_ESTORE_ID'].presence
+VALID_STORE_SECRET  = ENV['KLARNA_ESTORE_SECRET'].presence
 VALID_COUNTRY       = :SE
 
 Klarna.store_config_file = File.join(File.dirname(__FILE__), 'fixtures', 'klarna.yml')
@@ -42,7 +42,7 @@ def valid_credentials!
     c.store_id = VALID_STORE_ID.to_i
     c.store_secret = VALID_STORE_SECRET
     c.country = VALID_COUNTRY
-    c.mode = :production # NOTE: Actually not production unless test-mode is disabled in the Klarna admin pages.
+    c.mode = ENV['KLARNA_MODE'].presence || :test
     c.http_logging = (ENV['KLARNA_DEBUG'].to_s =~ /(true|1)/) || false
   end
 end
