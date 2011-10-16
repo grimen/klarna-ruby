@@ -45,8 +45,8 @@ Trivial example looking up an address using - in this case - a Swedish SSN:
   require 'klarna'
 
   Klarna.configure do |c|
-    c.store_id = 2
-    c.store_secret = 'lakrits'
+    c.store_id = 123
+    c.store_secret = 'secret'
 
     c.mode = :test
     c.http_logging = false
