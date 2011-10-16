@@ -15,8 +15,11 @@ MiniTest::Unit::TestCase.class_eval do
   include Klarna::AssertionsHelper
 end
 
-VALID_STORE_ID      = ENV['KLARNA_ESTORE_ID'].presence
-VALID_STORE_SECRET  = ENV['KLARNA_ESTORE_SECRET'].presence
+# For now Travis CI don't support multiple ENV-variables per testrun, so need this.
+KLARNA_ESTORE_ID, KLARNA_ESTORE_SECRET = ENV['KLARNA_ESTORE'].to_s.split(',')
+
+VALID_STORE_ID      = ENV['KLARNA_ESTORE_ID'].presence || KLARNA_ESTORE_ID
+VALID_STORE_SECRET  = ENV['KLARNA_ESTORE_SECRET'].presence || KLARNA_ESTORE_SECRET
 VALID_COUNTRY       = :SE
 
 Klarna.store_config_file = File.join(File.dirname(__FILE__), 'fixtures', 'klarna.yml')
