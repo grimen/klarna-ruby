@@ -26,7 +26,7 @@ module Klarna
         self.store_secret = args.shift || ::Klarna.store_secret
 
         if self.store_id.blank? || self.store_secret.blank?
-          raise ::Klarna::API::KlarnaCredentialsError, "Both STORE_ID or STORE_SECRET must be set."
+          raise ::Klarna::API::KlarnaCredentialsError, "Both 'store_id' and 'store_secret' must be set."
         end
 
         options = args.extract_options!
@@ -54,7 +54,7 @@ module Klarna
       end
 
       def call(service_method, *args)
-        args.collect! { |arg| arg.is_a?(String) ? ::Iconv.conv('utf-8', ::Klarna::API::PROTOCOL_ENCODING, arg) : arg }
+        args.collect! { |arg| arg.is_a?(String) ? ::Klarna::API.decode(arg) : arg }
         ::Klarna.log "Method: #{service_method}"
         ::Klarna.log "Params: %s" % self.add_meta_params(*args).inspect
 

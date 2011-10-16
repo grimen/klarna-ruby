@@ -1,6 +1,5 @@
 # encoding: utf-8
-require 'iconv'
-require 'digest/md5'
+# require 'iconv'
 require 'digest/sha2'
 require 'xmlrpc/base64'
 
@@ -151,9 +150,9 @@ module Klarna
 
       def digest(*args)
         string = args.join(':')
-        iso_value = self.encode(string) 
-        
-        
+        iso_value = self.encode(string)
+
+
         hex_md5_digest = [*::Digest::MD5.hexdigest(iso_value)].pack('H*')
         base64_digest = ::XMLRPC::Base64.encode(hex_md5_digest).strip
         hex_sha512_digest = [*Digest::SHA512.hexdigest(iso_value)].pack('H*')
@@ -161,7 +160,20 @@ module Klarna
       end
 
       def encode(string, from_encoding = 'utf-8')
-        ::Iconv.conv(::Klarna::API::PROTOCOL_ENCODING, from_encoding, string)
+        if string.respond_to?(:encode)
+          string.encode(::Klarna::API::PROTOCOL_ENCODING, from_encoding)
+        else
+          ::Iconv.conv(::Klarna::API::PROTOCOL_ENCODING, from_encoding, string)
+        end
+      end
+
+      def decode(string, from_encoding = ::Klarna::API::PROTOCOL_ENCODING)
+        if string.respond_to?(:encode)
+          string.encode('utf-8', from_encoding)
+        else
+          ::Iconv rescue require 'iconv'
+          ::Iconv.conv(from_encoding, ::Klarna::API::PROTOCOL_ENCODING, string)
+        end
       end
 
     end

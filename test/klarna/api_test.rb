@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'test_helper'
+require 'iconv'
 
 describe ::Klarna::API do
 
@@ -105,19 +106,13 @@ describe ::Klarna::API do
         assert_respond_to ::Klarna::API, :digest
       end
 
-      it 'should calculate a valid digest secret for one value' do
-        # TODO
-        # skip
+      it 'should calculate a valid digest secret for single value' do
+        assert_equal "RvaNtGgJzI4FLDLz7dH4PIwWl3vYwR6qpx/whgCf7qkxj4+0prU0zXOAw9Jc\nSQw+iMqzgAMyjq79azKmp40uWg==", ::Klarna::API.digest("secret 123")
       end
 
       it 'should calculate a valid digest secret for an array of values' do
-        # TODO
-        # skip
-      end
-
-      it 'should raise error if specified value is nor a string or an array' do
-        # TODO
-        # skip
+        assert_equal ::Klarna::API.digest("secret 1:secret 2:secret 3"), ::Klarna::API.digest("secret 1", "secret 2", "secret 3")
+        assert_equal "yKMen8LPEev5yLYUTjFvJdWY/t2tTx3JsK2s1nIgwu3wFfrdu6Kzce1VcGfo\nC/6OXQtR6nGVntYhEP7KUmtADw==", ::Klarna::API.digest("secret 1", "secret 2", "secret 3")
       end
     end
 
@@ -126,9 +121,28 @@ describe ::Klarna::API do
         assert_respond_to ::Klarna::API, :encode
       end
 
-      it 'should encode a specified string from "UTF-8" to "iso-8859-1" properly' do
-        # TODO
-        # skip
+      it 'should encode a specified string from "UTF-8" to "ISO-8859-1" properly' do
+        if RUBY_VERSION > '1.9'
+          assert_equal 'ISO-8859-1', ::Klarna::API.encode("ÅÄÖ".force_encoding('UTF-8')).encoding.name
+        else
+          ::Iconv rescue require 'iconv'
+          assert_equal 1, ::Klarna::API.encode("Ö").length # if it is UTF-8 String#length returns 2 bytes in Ruby < 1.9
+        end
+      end
+    end
+
+    describe '.encode' do
+      it 'should be defined' do
+        assert_respond_to ::Klarna::API, :decode
+      end
+
+      it 'should encode a specified string from "ISO-8859-1" to "UTF-8" properly' do
+        if RUBY_VERSION > '1.9'
+          assert_equal 'UTF-8', ::Klarna::API.decode("ÅÄÖ".force_encoding('ISO-8859-1')).encoding.name
+        else
+          ::Iconv rescue require 'iconv'
+          assert_equal 2, ::Klarna::API.decode("Ö").length # if it is UTF-8 String#length returns 2 bytes in Ruby < 1.9
+        end
       end
     end
 
