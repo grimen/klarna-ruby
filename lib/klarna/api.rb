@@ -1,5 +1,4 @@
 # encoding: utf-8
-# require 'iconv'
 require 'digest/sha2'
 require 'xmlrpc/base64'
 
