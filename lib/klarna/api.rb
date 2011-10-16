@@ -140,9 +140,9 @@ module Klarna
 
       def parse_flags(constant_name, flags)
         if flags.is_a?(Hash)
-          flags = flags.sum { |k,v|
-            ::Klarna::API.const_get(constant_name.to_s.upcase.to_sym)[k.to_s.upcase.to_sym]
-          }
+          flags = flags.sum do |k, v|
+            v ? ::Klarna::API.const_get(constant_name.to_s.upcase.to_sym)[k.to_s.upcase.to_sym] : 0
+          end
         end
         flags.to_i
       end

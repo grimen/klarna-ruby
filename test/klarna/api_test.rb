@@ -98,7 +98,40 @@ describe ::Klarna::API do
         assert_respond_to ::Klarna::API, :validate_arg
       end
 
-      # it 'should...'
+      # TODO: Add missing specs.
+    end
+
+    describe '.parse_flags' do
+      it 'should be defined' do
+        assert_respond_to ::Klarna::API, :parse_flags
+      end
+
+      it 'should calculate value for one flag properly' do
+        assert_equal 0, ::Klarna::API.parse_flags(:GOODS, :IS_SHIPMENT => false)
+        assert_equal 8, ::Klarna::API.parse_flags(:GOODS, :IS_SHIPMENT => true)
+      end
+
+      it 'should calculate value for multiple flags properly using hash (bitwise OR - a.k.a sum)' do
+        # Maybe overkill, but here we go... ;)
+
+        # Uppercase
+        assert_equal 0,   ::Klarna::API.parse_flags(:GOODS, :IS_SHIPMENT => false,  :IS_HANDLING => false,  :INC_VAT => false)
+        assert_equal 8,   ::Klarna::API.parse_flags(:GOODS, :IS_SHIPMENT => true,   :IS_HANDLING => false,  :INC_VAT => false)
+        assert_equal 16,  ::Klarna::API.parse_flags(:GOODS, :IS_SHIPMENT => false,  :IS_HANDLING => true,   :INC_VAT => false)
+        assert_equal 32,  ::Klarna::API.parse_flags(:GOODS, :IS_SHIPMENT => false,  :IS_HANDLING => false,  :INC_VAT => true)
+        assert_equal 24,  ::Klarna::API.parse_flags(:GOODS, :IS_SHIPMENT => true,   :IS_HANDLING => true,   :INC_VAT => false)
+        assert_equal 48,  ::Klarna::API.parse_flags(:GOODS, :IS_SHIPMENT => false,  :IS_HANDLING => true,   :INC_VAT => true)
+        assert_equal 56,  ::Klarna::API.parse_flags(:GOODS, :IS_SHIPMENT => true,   :IS_HANDLING => true,   :INC_VAT => true)
+
+        # Lowercase (for readability)
+        assert_equal 0,   ::Klarna::API.parse_flags(:goods, :is_shipment => false,  :is_handling => false,  :inc_vat => false)
+        assert_equal 8,   ::Klarna::API.parse_flags(:goods, :is_shipment => true,   :is_handling => false,  :inc_vat => false)
+        assert_equal 16,  ::Klarna::API.parse_flags(:goods, :is_shipment => false,  :is_handling => true,   :inc_vat => false)
+        assert_equal 32,  ::Klarna::API.parse_flags(:goods, :is_shipment => false,  :is_handling => false,  :inc_vat => true)
+        assert_equal 24,  ::Klarna::API.parse_flags(:goods, :is_shipment => true,   :is_handling => true,   :inc_vat => false)
+        assert_equal 48,  ::Klarna::API.parse_flags(:goods, :is_shipment => false,  :is_handling => true,   :inc_vat => true)
+        assert_equal 56,  ::Klarna::API.parse_flags(:goods, :is_shipment => true,   :is_handling => true,   :inc_vat => true)
+      end
     end
 
     describe '.digest' do
